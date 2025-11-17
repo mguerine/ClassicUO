@@ -74,11 +74,9 @@ namespace ClassicUO.Game.GameObjects
             {
                 if (StaticFilters.isHumanAndMonster(graphic))
                 {
-                    if (StaticFilters.IsOutStamina())
+                    if (World.Player.Stamina != World.Player.StaminaMax)
                     {
-
                         Client.Game.UO.FileManager.TileData.StaticData[Graphic].IsImpassable = true;
-
                     }
                     else
                     {
@@ -93,7 +91,7 @@ namespace ClassicUO.Game.GameObjects
             {
                 if (StaticFilters.isHumanAndMonster(graphic))
                 {
-                    if (StaticFilters.IsOutStamina())
+                    if (World.Player.Stamina != World.Player.StaminaMax)
                     {
                         Client.Game.UO.FileManager.TileData.StaticData[Graphic].IsImpassable = true;
 

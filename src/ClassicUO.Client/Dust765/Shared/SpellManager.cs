@@ -206,10 +206,10 @@ namespace ClassicUO.Dust765.Managers
 
         private static void ChatHandlers_OnSpellCast(Mobile mob, SpellAction value)
         {
-            if (mob == World.Player)
+            if (mob == ClassicUO.Client.Game.UO.World.Player)
             {
                 _lastSpell = value;
-                GameActions.Print($"Player casting {_lastSpell}");
+                //GameActions.Print($"Player casting {_lastSpell}");
             }
 
             SpellHandle spell = default;

@@ -60,8 +60,7 @@ namespace ClassicUO.Dust765.Dust765
             {
                 return;
             }
-
-            if (World.Player == null)
+            if (ClassicUO.Client.Game.UO.World.Player == null)
             {
                 return;
             }
@@ -90,7 +89,7 @@ namespace ClassicUO.Dust765.Dust765
 
                 var texture = ArtLoader.Instance.GetStaticTexture(entry.Graphic, out var bounds);
 
-                Point pm = CombatCollection.CalcUnderChar(World.Player);
+                Point pm = CombatCollection.CalcUnderChar(ClassicUO.Client.Game.UO.World.Player);
                 pm.X -= bounds.Width;
 
                 Vector3 _hueVector = ShaderHueTranslator.GetHueVector(0, false, 1);
@@ -139,7 +138,7 @@ namespace ClassicUO.Dust765.Dust765
                 return;
             }
 
-            if (World.Player == null)
+            if (ClassicUO.Client.Game.UO.World.Player == null)
             {
                 return;
             }
@@ -166,7 +165,7 @@ namespace ClassicUO.Dust765.Dust765
             //0x37C4 = Glow 2
             //0x42CF = Sparkle 6
 
-            World.SpawnEffect(GraphicEffectType.FixedFrom, World.Player.Serial, 0, graphic, hue, 0, 0, 0, 0, 0, 0, speed, duration, false, true, false, GraphicEffectBlendMode.Normal);
+            ClassicUO.Client.Game.UO.World.SpawnEffect(GraphicEffectType.FixedFrom, ClassicUO.Client.Game.UO.World.Player.Serial, 0, graphic, hue, 0, 0, 0, 0, 0, 0, speed, duration, false, true, false, GraphicEffectBlendMode.Normal);
         }
         //ART EVENT
         public void DrawArt(ushort graphic)

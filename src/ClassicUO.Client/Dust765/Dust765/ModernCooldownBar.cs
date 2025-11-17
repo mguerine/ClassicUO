@@ -55,7 +55,7 @@ namespace ClassicUO.Dust765.Dust765
         private ushort _graphic;
         private DataBox _box;
 
-        public ModernCooldownBar() : base(0, 0)
+        public ModernCooldownBar(World world) : base(world, 0, 0)
         {
             CanMove = true;
             CanCloseWithRightClick = true;
@@ -71,7 +71,7 @@ namespace ClassicUO.Dust765.Dust765
             //
         }
 
-        public ModernCooldownBar(int x, int y) : this()
+        public ModernCooldownBar(World world, int x, int y) : this(world)
         {
             X = x;
             Y = y;
@@ -496,18 +496,18 @@ namespace ClassicUO.Dust765.Dust765
                                         _alpha / 255f,
                                         true
                                     );
+                ref readonly var gumpInfo = ref Client.Game.UO.Gumps.GetGump(Graphic);
 
-                var texture = GumpsLoader.Instance.GetGumpTexture(Graphic, out var bounds);
-
-                if (texture != null)
+                if (gumpInfo.Texture != null)
                 {
-                    batcher.Draw
-                    (
-                        texture,
-                        new Vector2(x, y),
-                        bounds,
-                        hueVector
-                    );
+                    batcher.Draw(gumpInfo.Texture, new Vector2(x, y), gumpInfo.UV, hueVector);
+
+                    if (ProfileManager.CurrentProfile != null && ProfileManager.CurrentProfile.BuffBarTime)
+                    {
+                        _gText.Draw(batcher, x - 3, y + gumpInfo.UV.Height / 2 - 3, hueVector.Z);
+                    }
+                
+
                     //should there be the need to resize the pic, use this
                     //batcher.Draw(texture, new Rectangle(x, y, bounds.Width, bounds.Height), bounds, hueVector);
                     //
@@ -520,7 +520,7 @@ namespace ClassicUO.Dust765.Dust765
                             _timeborderline.Draw(batcher, x + 154, y);
                             _timebgline.Draw(batcher, x + 155, y + 1);
                         }
-                        _gText.Draw(batcher, x + 154, y + bounds.Height / 2 - 3, hueVector.Z);
+                        _gText.Draw(batcher, x + 154, y + gumpInfo.UV.Height / 2 - 3, hueVector.Z);
                         //
                     }
 
@@ -529,7 +529,7 @@ namespace ClassicUO.Dust765.Dust765
                     _bgline.Draw(batcher, x + 31, y + 1);
                     _tickline.Draw(batcher, x + 31, y + 1);
                     _sepline.Draw(batcher, x + 30 + this._sepline.X, y + 1);
-                    _label.Draw(batcher, x + 31, y + bounds.Height / 2 - 4);
+                    _label.Draw(batcher, x + 31, y + gumpInfo.UV.Height / 2 - 4);
                     //
 
 

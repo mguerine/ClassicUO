@@ -153,8 +153,8 @@ namespace ClassicUO.Game.UI.Gumps
 
         // ## BEGIN - END ## // BASICSETUP
         // ## BEGIN - END ## // ART / HUE CHANGES
-        private Checkbox _colorStealth;
-        private ClickableColorBox _stealthColorPickerBox;
+        private Checkbox _colorStealth, _colorBlockerTile;
+        private ClickableColorBox _stealthColorPickerBox, _blockerTileColorPickerBox;
         private Combobox _treeType, _blockerType, _stealthNeonType;
         // ## BEGIN - END ## // ART / HUE CHANGES
         // ## BEGIN - END ## // VISUAL HELPERS
@@ -170,7 +170,7 @@ namespace ClassicUO.Game.UI.Gumps
         private InputField _blockWoSArt, _blockEnergyFArt;
         // ## BEGIN - END ## // MISC
         // ## BEGIN - END ## // MISC2
-        private Checkbox _hueImpassableView, _transparentHouses, _invisibleHouses, _ignoreCoT, _showMapCloseFriend, _autoAvoidMobiles;
+        private Checkbox _hueImpassableView, _transparentHouses, _invisibleHouses, _ignoreCoT, _showMapCloseFriend, _autoAvoidMobiles, _drawMobilesWithSurfaceOverhead;
         private HSliderBar _transparentHousesZ, _transparentHousesTransparency, _invisibleHousesZ, _dontRemoveHouseBelowZ;
         // ## BEGIN - END ## // MISC2
         // ## BEGIN - END ## // UI/GUMPS
@@ -3847,10 +3847,6 @@ namespace ClassicUO.Game.UI.Gumps
             section11.AddRight(AddLabel(null, "X ( reopen paperdoll after changes )", 0, 0), 2);
             startY += _showAllLayersPaperdoll_X.Height + 2;
             // ## BEGIN - END ## // MISC3 SHOWALLLAYERS
-            // ## BEGIN - END ## // MISC3 THIEFSUPREME
-            section11.Add(_overrideContainerOpenRange = AddCheckBox(null, "Override container open range", _currentProfile.OverrideContainerOpenRange, startX, startY));
-            startY += _overrideContainerOpenRange.Height + 2;
-            // ## BEGIN - END ## // MISC3 THIEFSUPREME
 
             Add(rightArea, PAGE);
         }
@@ -4154,7 +4150,7 @@ namespace ClassicUO.Game.UI.Gumps
             _hueLabel.Y = 1;
             main.Add(_hueLabel);
 
-            ClickableColorBox _hueSelector = new ClickableColorBox(_hueLabel.X + _hueLabel.Width + 2, 1, 13, 14, data.hue);
+            ClickableColorBox _hueSelector = new ClickableColorBox(World, _hueLabel.X + _hueLabel.Width + 2, 1, 13, 14, data.hue);
             main.Add(_hueSelector);
 
 
@@ -5077,12 +5073,12 @@ namespace ClassicUO.Game.UI.Gumps
                 if (_blockWoS.IsChecked)
                 {
                     Client.Game.UO.FileManager.TileData.StaticData[0x038A].IsImpassable = true;
-                    TileDataLoader.Instance.StaticData[_currentProfile.BlockWoSArt].IsImpassable = true;
+                    Client.Game.UO.FileManager.TileData.StaticData[_currentProfile.BlockWoSArt].IsImpassable = true;
                 }
                 else
                 {
                     Client.Game.UO.FileManager.TileData.StaticData[0x038A].IsImpassable = false;
-                    TileDataLoader.Instance.StaticData[_currentProfile.BlockWoSArt].IsImpassable = false;
+                    Client.Game.UO.FileManager.TileData.StaticData[_currentProfile.BlockWoSArt].IsImpassable = false;
                 }
                 _currentProfile.BlockWoS = _blockWoS.IsChecked;
             }
@@ -5091,12 +5087,12 @@ namespace ClassicUO.Game.UI.Gumps
                 if (_blockWoSFelOnly.IsChecked && World.MapIndex == 0)
                 {
                     Client.Game.UO.FileManager.TileData.StaticData[0x038A].IsImpassable = true;
-                    TileDataLoader.Instance.StaticData[_currentProfile.BlockWoSArt].IsImpassable = true;
+                    Client.Game.UO.FileManager.TileData.StaticData[_currentProfile.BlockWoSArt].IsImpassable = true;
                 }
                 else
                 {
                     Client.Game.UO.FileManager.TileData.StaticData[0x038A].IsImpassable = false;
-                    TileDataLoader.Instance.StaticData[_currentProfile.BlockWoSArt].IsImpassable = false;
+                    Client.Game.UO.FileManager.TileData.StaticData[_currentProfile.BlockWoSArt].IsImpassable = false;
                 }
                 _currentProfile.BlockWoSFelOnly = _blockWoSFelOnly.IsChecked;
             }
@@ -5109,17 +5105,17 @@ namespace ClassicUO.Game.UI.Gumps
                     for (int i = 0; i < 31; i++)
                     {
                         //0x3946 to 0x3964 / 14662 to 14692
-                        TileDataLoader.Instance.StaticData[0x3946 + i].IsImpassable = true;
+                        Client.Game.UO.FileManager.TileData.StaticData[0x3946 + i].IsImpassable = true;
                     }
-                    TileDataLoader.Instance.StaticData[_currentProfile.BlockEnergyFArt].IsImpassable = true;
+                    Client.Game.UO.FileManager.TileData.StaticData[_currentProfile.BlockEnergyFArt].IsImpassable = true;
                 }
                 else
                 {
                     for (int i = 0; i < 31; i++)
                     {
-                        TileDataLoader.Instance.StaticData[0x3946 + i].IsImpassable = false;
+                        Client.Game.UO.FileManager.TileData.StaticData[0x3946 + i].IsImpassable = false;
                     }
-                    TileDataLoader.Instance.StaticData[_currentProfile.BlockEnergyFArt].IsImpassable = false;
+                    Client.Game.UO.FileManager.TileData.StaticData[_currentProfile.BlockEnergyFArt].IsImpassable = false;
                 }
                 _currentProfile.BlockEnergyF = _blockEnergyF.IsChecked;
             }
@@ -5129,17 +5125,17 @@ namespace ClassicUO.Game.UI.Gumps
                 {
                     for (int i = 0; i < 31; i++)
                     {
-                        TileDataLoader.Instance.StaticData[0x3946 + i].IsImpassable = true;
+                        Client.Game.UO.FileManager.TileData.StaticData[0x3946 + i].IsImpassable = true;
                     }
-                    TileDataLoader.Instance.StaticData[_currentProfile.BlockEnergyFArt].IsImpassable = true;
+                    Client.Game.UO.FileManager.TileData.StaticData[_currentProfile.BlockEnergyFArt].IsImpassable = true;
                 }
                 else
                 {
                     for (int i = 0; i < 31; i++)
                     {
-                        TileDataLoader.Instance.StaticData[0x3946 + i].IsImpassable = false;
+                        Client.Game.UO.FileManager.TileData.StaticData[0x3946 + i].IsImpassable = false;
                     }
-                    TileDataLoader.Instance.StaticData[_currentProfile.BlockEnergyFArt].IsImpassable = false;
+                    Client.Game.UO.FileManager.TileData.StaticData[_currentProfile.BlockEnergyFArt].IsImpassable = false;
                 }
                 _currentProfile.BlockEnergyFFelOnly = _blockEnergyFFelOnly.IsChecked;
             }
@@ -5186,13 +5182,13 @@ namespace ClassicUO.Game.UI.Gumps
                 {
                     foreach (Gump g in UIManager.Gumps.OfType<BuffGump>())
                         g.Dispose();
-                    UIManager.Add(new ImprovedBuffGump());
+                    UIManager.Add(new ImprovedBuffGump(this.World));
                 }
                 else
                 {
                     foreach (Gump g in UIManager.Gumps.OfType<ImprovedBuffGump>())
                         g.Dispose();
-                    UIManager.Add(new BuffGump(100, 100));
+                    UIManager.Add(new BuffGump(this.World, 100, 100));
                 }
             }
 

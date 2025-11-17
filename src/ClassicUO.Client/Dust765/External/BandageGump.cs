@@ -57,7 +57,7 @@ namespace ClassicUO.Dust765.External
             1060167
         };
 
-        public BandageGump() : base(0, 0)
+        public BandageGump(World world) : base(world, 0, 0)
         {
             CanMove = false;
             AcceptMouseInput = false;

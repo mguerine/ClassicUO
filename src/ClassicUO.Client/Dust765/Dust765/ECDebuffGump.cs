@@ -57,14 +57,14 @@ namespace ClassicUO.Dust765.Dust765
         private ushort _graphic;
         private DataBox _box;
 
-        public ECDebuffGump() : base(0, 0)
+        public ECDebuffGump(World world) : base(world, 0, 0)
         {
             CanMove = true;
             CanCloseWithRightClick = true;
             AcceptMouseInput = true;
         }
 
-        public ECDebuffGump(int x, int y) : this()
+        public ECDebuffGump(World world, int x, int y) : this(world)
         {
             X = x;
             Y = y;
@@ -395,21 +395,15 @@ namespace ClassicUO.Dust765.Dust765
                                         true
                                     );
 
-                var texture = GumpsLoader.Instance.GetGumpTexture(Graphic, out var bounds);
+                ref readonly var gumpInfo = ref Client.Game.UO.Gumps.GetGump(Graphic);
 
-                if (texture != null)
+                if (gumpInfo.Texture != null)
                 {
-                    batcher.Draw
-                    (
-                        texture,
-                        new Vector2(x, y),
-                        bounds,
-                        hueVector
-                    );
+                    batcher.Draw(gumpInfo.Texture, new Vector2(x, y), gumpInfo.UV, hueVector);
 
                     if (ProfileManager.CurrentProfile != null && ProfileManager.CurrentProfile.BuffBarTime)
                     {
-                        _gText.Draw(batcher, x - 3, y + bounds.Height / 2 - 3, hueVector.Z);
+                        _gText.Draw(batcher, x - 3, y + gumpInfo.UV.Height / 2 - 3, hueVector.Z);
                     }
                 }
 

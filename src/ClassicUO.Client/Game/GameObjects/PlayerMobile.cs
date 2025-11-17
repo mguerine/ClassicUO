@@ -32,10 +32,10 @@ namespace ClassicUO.Game.GameObjects
             Skills = new Skill[Client.Game.UO.FileManager.Skills.SkillsCount];
 
             // ## BEGIN - END ## // UI/GUMPS
-            UIManager.Add(BandageTimer = new BandageGump());
+            UIManager.Add(BandageTimer = new BandageGump(world));
             // ## BEGIN - END ## // UI/GUMPS
             // ## BEGIN - END ## // ONCASTINGGUMP
-            UIManager.Add(OnCasting = new OnCastingGump());
+            UIManager.Add(OnCasting = new OnCastingGump(world));
             // ## BEGIN - END ## // ONCASTINGGUMP
 
             for (int i = 0; i < Skills.Length; i++)
@@ -727,7 +727,7 @@ namespace ClassicUO.Game.GameObjects
 
         public bool WalkNotAvoid(Direction direction, bool run)
         {
-            if (Walker.WalkingFailed || Walker.LastStepRequestTime > Time.Ticks || Walker.StepsCount >= Constants.MAX_STEP_COUNT || Client.Version >= ClientVersion.CV_60142 && IsParalyzed)
+            if (Walker.WalkingFailed || Walker.LastStepRequestTime > Time.Ticks || Walker.StepsCount >= Constants.MAX_STEP_COUNT || ClassicUO.Client.Game.UO.Version >= ClientVersion.CV_60142 && IsParalyzed)
             {
                 return false;
             }

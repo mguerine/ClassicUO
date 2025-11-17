@@ -26,7 +26,7 @@ namespace ClassicUO.Dust765.External
         private StaticPic _icon;
         public SpellAction _spell;
 
-        public OnCastingGump() : base(0, 0)
+        public OnCastingGump(World world) : base(world, 0, 0)
         {
             CanMove = false;
             AcceptMouseInput = false;

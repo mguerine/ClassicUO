@@ -333,6 +333,7 @@ namespace ClassicUO.Configuration
         public bool ShowAllLayers { get; set; }
         public bool ShowAllLayersPaperdoll { get; set; }
         public int ShowAllLayersPaperdoll_X { get; set; } = 166;
+        public bool VisualResponseManager { get; set; } = false;
         // ## BEGIN - END ## 
 
         public bool ShowJournalClient { get; set; } = true;
@@ -616,7 +617,7 @@ namespace ClassicUO.Configuration
                                     //gump = new BuffGump();
                                     // ## BEGIN - END ## // TAZUO
                                     if (ProfileManager.CurrentProfile.UseImprovedBuffBar)
-                                        gump = new ImprovedBuffGump();
+                                        gump = new ImprovedBuffGump(world);
                                     else
                                         gump = new BuffGump(world);
                                     // ## BEGIN - END ## // TAZUO
@@ -624,22 +625,22 @@ namespace ClassicUO.Configuration
                                     break;
                                 // ## BEGIN - END ## // MODERNCOOLDOWNBAR
                                 case GumpType.ECBuffGump:
-                                    gump = new ECBuffGump();
+                                    gump = new ECBuffGump(world);
 
                                     break;
 
                                 case GumpType.ECDebuffGump:
-                                    gump = new ECDebuffGump();
+                                    gump = new ECDebuffGump(world);
 
                                     break;
 
                                 case GumpType.ECStateGump:
-                                    gump = new ECStateGump();
+                                    gump = new ECStateGump(world);
 
                                     break;
 
                                 case GumpType.ModernCooldownBar:
-                                    gump = new ModernCooldownBar();
+                                    gump = new ModernCooldownBar(world);
 
                                     break;
                                 // ## BEGIN - END ## // MODERNCOOLDOWNBAR

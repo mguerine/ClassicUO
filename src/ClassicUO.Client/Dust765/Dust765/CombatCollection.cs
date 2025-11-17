@@ -229,33 +229,33 @@ namespace ClassicUO.Dust765.Dust765
         }
 
         //NETWORK\PACKETHANDLERS.CS
-        public static void SpellCastFromCliloc(string text)
-        {
-            if (SpellDefinition.WordToTargettype.TryGetValue(text, out SpellDefinition spell))
-            {
-                GameActions.LastSpellIndexCursor = spell.ID;
-            }
-            else
-            {
-                //THIS IS INCASE RAZOR OR ANOTHER ASSISTANT REWRITES THE STRING
+        //public static void SpellCastFromCliloc(string text)
+        //{
+        //    if (SpellDefinition.WordToTargettype.TryGetValue(text, out SpellDefinition spell))
+        //    {
+        //        GameActions.LastSpellIndexCursor = spell.ID;
+        //    }
+        //    else
+        //    {
+        //        //THIS IS INCASE RAZOR OR ANOTHER ASSISTANT REWRITES THE STRING
 
-                foreach (var key in SpellDefinition.WordToTargettype.Keys)
-                {
-                    if (text.Contains(key)) //SPELL FOUND
-                    {
-                        GameActions.LastSpellIndexCursor = SpellDefinition.WordToTargettype[key].ID;
+        //        foreach (var key in SpellDefinition.WordToTargettype.Keys)
+        //        {
+        //            if (text.Contains(key)) //SPELL FOUND
+        //            {
+        //                GameActions.LastSpellIndexCursor = SpellDefinition.WordToTargettype[key].ID;
 
-                        //break; //DONT BREAK LOOP BECAUSE OF IN NOX / IN NOX GRAV
-                    }
-                }
-            }
-            // ## BEGIN - END ## // ONCASTINGGUMP
-            if (ProfileManager.CurrentProfile.OnCastingGump)
-            {
-                if (!GameActions.iscasting)
-                    World.Player.OnCasting.Start((uint) GameActions.LastSpellIndexCursor);
-            }
-            // ## BEGIN - END ## // ONCASTINGGUMP
-        }
+        //                //break; //DONT BREAK LOOP BECAUSE OF IN NOX / IN NOX GRAV
+        //            }
+        //        }
+        //    }
+        //    // ## BEGIN - END ## // ONCASTINGGUMP
+        //    if (ProfileManager.CurrentProfile.OnCastingGump)
+        //    {
+        //        if (!GameActions.iscasting)
+        //            World.Player.OnCasting.Start((uint) GameActions.LastSpellIndexCursor);
+        //    }
+        //    // ## BEGIN - END ## // ONCASTINGGUMP
+        //}
     }
 }

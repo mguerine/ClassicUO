@@ -72,7 +72,7 @@ namespace ClassicUO.Game.UI.Gumps
         private string[] TabNames;
 
 
-        public TabGridGump() : base(0, 0)
+        public TabGridGump(World world) : base(world, 0, 0)
         {
             string tablist = ProfileManager.CurrentProfile.TabList.ToString();
             TabNames = tablist.Split(':');
@@ -171,7 +171,7 @@ namespace ClassicUO.Game.UI.Gumps
 
         public override void OnButtonClick(int buttonID)
         {
-            GameActions.Print(buttonID.ToString());
+            //GameActions.Print(buttonID.ToString());
             if (buttonID < listaMacros.Count)
             {
                 GameScene gs = Client.Game.GetScene<GameScene>();

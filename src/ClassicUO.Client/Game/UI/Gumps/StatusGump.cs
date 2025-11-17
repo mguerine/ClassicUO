@@ -51,7 +51,7 @@ namespace ClassicUO.Game.UI.Gumps
 
                         if (gump == null)
                         {
-                            UIManager.Add(new ImprovedBuffGump());
+                            UIManager.Add(new ImprovedBuffGump(this.World));
                         }
                         else
                         {

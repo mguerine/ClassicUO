@@ -156,9 +156,9 @@ namespace ClassicUO.Game.Scenes
             // ## BEGIN - END ## // ONCASTINGGUMP
             if (ProfileManager.CurrentProfile.OnCastingGump)
             {
-                if (World.Player.OnCasting == null)
+                if (ClassicUO.Client.Game.UO.World.Player.OnCasting == null)
                 {
-                    UIManager.Add(World.Player.OnCasting = new OnCastingGump());
+                    UIManager.Add(ClassicUO.Client.Game.UO.World.Player.OnCasting = new OnCastingGump(_world));
                 }
             }
             // ## BEGIN - END ## // ONCASTINGGUMP
@@ -279,7 +279,7 @@ namespace ClassicUO.Game.Scenes
             }
 
             // ## BEGIN - END ## // UI/GUMPS
-            World.Player?.BandageTimer.OnMessage(text, hue, name, e.IsUnicode);
+            ClassicUO.Client.Game.UO.World.Player?.BandageTimer.OnMessage(text, hue, name, e.IsUnicode);
             // ## BEGIN - END ## // UI/GUMPS
 
             if (!string.IsNullOrEmpty(text))

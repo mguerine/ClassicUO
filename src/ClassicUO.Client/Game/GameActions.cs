@@ -643,7 +643,7 @@ namespace ClassicUO.Game
                 if (ProfileManager.CurrentProfile.OnCastingGump)
                 {
                     if (!iscasting)
-                        World.Player.OnCasting.Start((uint)index);
+                        ClassicUO.Client.Game.UO.World.Player.OnCasting.Start((uint)index);
                 }
                 // ## BEGIN - END ## // ONCASTINGGUMP
                 LastSpellIndex = index;
@@ -663,7 +663,7 @@ namespace ClassicUO.Game
                 if (ProfileManager.CurrentProfile.OnCastingGump)
                 {
                     if (!iscasting)
-                        World.Player.OnCasting.Start((uint)index);
+                        ClassicUO.Client.Game.UO.World.Player.OnCasting.Start((uint)index);
                 }
                 // ## BEGIN - END ## // ONCASTINGGUMP
 

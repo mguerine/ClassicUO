@@ -485,7 +485,7 @@ namespace ClassicUO.Network
                 if (damage > 0)
                 {
                     // ## BEGIN - END ## // ONCASTINGGUMP
-                    if (entity == World.Player)
+                    if (entity == ClassicUO.Client.Game.UO.World.Player)
                         GameActions.iscasting = false;
                     // ## BEGIN - END ## // ONCASTINGGUMP
                     world.WorldTextManager.AddDamage(entity, damage);
@@ -4770,11 +4770,11 @@ namespace ClassicUO.Network
             // ## BEGIN - END ## // ONCASTINGGUMP
             if (ProfileManager.CurrentProfile.OnCastingGump)
             {
-                World.Player?.OnCasting.OnCliloc(cliloc);
+                ClassicUO.Client.Game.UO.World.Player?.OnCasting.OnCliloc(cliloc);
             }
             // ## BEGIN - END ## // ONCASTINGGUMP
             // ## BEGIN - END ## // UI/GUMPS
-            World.Player?.BandageTimer.OnCliloc(cliloc);
+            ClassicUO.Client.Game.UO.World.Player?.BandageTimer.OnCliloc(cliloc);
             // ## BEGIN - END ## // UI/GUMPS
 
             if (cliloc == 1008092 || cliloc == 1005445) // value for "You notify them you don't want to join the party" || "You have been added to the party"
@@ -5596,7 +5596,7 @@ namespace ClassicUO.Network
                         // ## BEGIN - END ## // TAZUO
                         //World.Player.AddBuff(ic, BuffTable.Table[iconID], timer, text);
                         // ## BEGIN - END ## // TAZUO
-                        World.Player.AddBuff(ic, BuffTable.Table[iconID], timer, text, title);
+                        ClassicUO.Client.Game.UO.World.Player.AddBuff(ic, BuffTable.Table[iconID], timer, text, title);
                         // ## BEGIN - END ## // TAZUO
 
                         if (!alreadyExists)

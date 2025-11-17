@@ -119,6 +119,9 @@ namespace ClassicUO.Game
 
         public JournalManager Journal { get; } = new JournalManager();
 
+        // ## BEGIN - END ## // TAZUO
+        public static CoolDownBarManager CoolDownBarManager { get; } = new CoolDownBarManager();
+        // ## BEGIN - END ## // TAZUO
 
         public int MapIndex
         {

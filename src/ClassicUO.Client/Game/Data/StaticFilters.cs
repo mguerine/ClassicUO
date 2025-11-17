@@ -376,11 +376,6 @@ namespace ClassicUO.Game.Data
         }
         // ## BEGIN - END ## // MISC2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsOutStamina()
-        {
-            return World.Player.Stamina != World.Player.StaminaMax;
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool isHumanAndMonster(ushort g)
         {
             switch (g)

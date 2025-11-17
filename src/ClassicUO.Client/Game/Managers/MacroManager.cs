@@ -1434,7 +1434,7 @@ namespace ClassicUO.Game.Managers
                         }
                         else
                         {
-                            UIManager.Add(new ImprovedBuffGump());
+                            UIManager.Add(new ImprovedBuffGump(_world));
                         }
                     }
                     else
@@ -1835,7 +1835,7 @@ namespace ClassicUO.Game.Managers
                     }
                     else
                     {
-                        UIManager.Add(new ECBuffGump(100, 100));
+                        UIManager.Add(new ECBuffGump(_world, 100, 100));
                     }
 
                     break;
@@ -1849,7 +1849,7 @@ namespace ClassicUO.Game.Managers
                     }
                     else
                     {
-                        UIManager.Add(new ECDebuffGump(100, 100));
+                        UIManager.Add(new ECDebuffGump(_world, 100, 100));
                     }
 
                     break;
@@ -1863,7 +1863,7 @@ namespace ClassicUO.Game.Managers
                     }
                     else
                     {
-                        UIManager.Add(new ECStateGump(100, 100));
+                        UIManager.Add(new ECStateGump(_world, 100, 100));
                     }
 
                     break;
@@ -1877,7 +1877,7 @@ namespace ClassicUO.Game.Managers
                     }
                     else
                     {
-                        UIManager.Add(new ModernCooldownBar(100, 100));
+                        UIManager.Add(new ModernCooldownBar(_world, 100, 100));
                     }
 
                     break;
