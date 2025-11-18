@@ -87,23 +87,25 @@ namespace ClassicUO.Dust765.Dust765
                     continue;
                 }
 
-                var texture = ArtLoader.Instance.GetStaticTexture(entry.Graphic, out var bounds);
+                //Client.Game.UO.FileManager.Arts.
 
-                Point pm = CombatCollection.CalcUnderChar(ClassicUO.Client.Game.UO.World.Player);
-                pm.X -= bounds.Width;
+                //var texture = ArtLoader.Instance.GetStaticTexture(entry.Graphic, out var bounds);
 
-                Vector3 _hueVector = ShaderHueTranslator.GetHueVector(0, false, 1);
+                //Point pm = CombatCollection.CalcUnderChar(ClassicUO.Client.Game.UO.World.Player);
+                //pm.X -= bounds.Width;
 
-                //vanish effect
-                if (delta > 600)
-                {
-                    float _delta = delta;
-                    float _alpha = 1 - (_delta / 1000);
+                //Vector3 _hueVector = ShaderHueTranslator.GetHueVector(0, false, 1);
+
+                ////vanish effect
+                //if (delta > 600)
+                //{
+                //    float _delta = delta;
+                //    float _alpha = 1 - (_delta / 1000);
                     
-                    _hueVector.Z = _alpha;
-                }
+                //    _hueVector.Z = _alpha;
+                //}
 
-                batcher.Draw(texture, new Rectangle(pm.X, pm.Y - entry.OffsetY, bounds.Width, bounds.Height), bounds, _hueVector);
+                //batcher.Draw(texture, new Rectangle(pm.X, pm.Y - entry.OffsetY, bounds.Width, bounds.Height), bounds, _hueVector);
             }
         }
 

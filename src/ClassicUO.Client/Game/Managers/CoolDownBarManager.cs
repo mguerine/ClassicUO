@@ -12,7 +12,7 @@ namespace ClassicUO.Game.Managers
 
         public CoolDownBarManager()
         {
-            MessageManager.MessageReceived += MessageManager_MessageReceived;
+            ClassicUO.Client.Game.UO.World.MessageManager.MessageReceived += MessageManager_MessageReceived;
         }
 
         private void MessageManager_MessageReceived(object sender, MessageEventArgs e)
@@ -56,7 +56,7 @@ namespace ClassicUO.Game.Managers
             {
                 if (coolDownBars[i] == null || coolDownBars[i].IsDisposed)
                 {
-                    coolDownBars[i] = new CoolDownBar(_duration, _name, _hue, CoolDownBar.DEFAULT_X, CoolDownBar.DEFAULT_Y + (i * (CoolDownBar.COOL_DOWN_HEIGHT + 5)));
+                    coolDownBars[i] = new CoolDownBar(ClassicUO.Client.Game.UO.World, _duration, _name, _hue, CoolDownBar.DEFAULT_X, CoolDownBar.DEFAULT_Y + (i * (CoolDownBar.COOL_DOWN_HEIGHT + 5)));
                     UIManager.Add(coolDownBars[i]);
                     return;
                 }

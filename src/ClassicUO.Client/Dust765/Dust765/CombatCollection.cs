@@ -227,7 +227,16 @@ namespace ClassicUO.Dust765.Dust765
         {
             GameCursor._startSpellTime = Time.Ticks;
         }
+        public static Point CalcUnderChar(Mobile mobile)
+        {
+            Point p = mobile.RealScreenPosition;
+            p.X += (int)mobile.Offset.X + 22;
+            p.Y += (int)(mobile.Offset.Y - mobile.Offset.Z) + 22;
 
+            p = Client.Game.Scene.Camera.WorldToScreen(p);
+
+            return p;
+        }
         //NETWORK\PACKETHANDLERS.CS
         //public static void SpellCastFromCliloc(string text)
         //{

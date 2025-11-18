@@ -112,7 +112,8 @@ namespace ClassicUO.Dust765.External
             // stop the timer
             for (int i = 0; i < _stopAtClilocs.Length; i++)
             {
-                if (ClilocLoader.Instance.GetString(_stopAtClilocs[i]) == text)
+                
+                if (Client.Game.UO.FileManager.Clilocs.GetString(_stopAtClilocs[i]) == text)
                 {
                     Stop();
                     return;
@@ -122,7 +123,7 @@ namespace ClassicUO.Dust765.External
             // start the timer
             for (int i = 0; i < _stopAtClilocs.Length; i++)
             {
-                if (ClilocLoader.Instance.GetString(_stopAtClilocs[i]) == text)
+                if (Client.Game.UO.FileManager.Clilocs.GetString(_stopAtClilocs[i]) == text)
                 {
                     Start();
                     return;
