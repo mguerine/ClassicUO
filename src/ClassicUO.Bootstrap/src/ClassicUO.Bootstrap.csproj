@@ -9,6 +9,7 @@
     <RootNamespace>ClassicUO</RootNamespace>
     <ApplicationIcon>cuoicon.ico</ApplicationIcon>
     <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

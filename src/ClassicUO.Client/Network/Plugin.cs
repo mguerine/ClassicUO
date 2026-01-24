@@ -212,6 +212,7 @@ namespace ClassicUO.Network
             try
             {
                 var assptr = Native.LoadLibrary(PluginPath);
+                Log.Trace($"PluginPath: {PluginPath}.");
 
                 Log.Trace($"assembly: {assptr}");
 

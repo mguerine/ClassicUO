@@ -27,7 +27,7 @@ namespace ClassicUO.Game.UI.Gumps
         private const byte FONT = 0xFF;
         private const ushort HUE_FONT = 0xFFFF;
         private const int WIDTH = 700;
-        private const int HEIGHT = 500;
+        private const int HEIGHT = 600;
         private const int TEXTBOX_HEIGHT = 25;
 
         private static Texture2D _logoTexture2D;
@@ -390,11 +390,59 @@ namespace ClassicUO.Game.UI.Gumps
             );
 
             // ## BEGIN - END ## // BASICSETUP
-            Add(new NiceButton(10, 10 + 30 * i++, 140, 25, ButtonAction.SwitchPage, "Dust") { ButtonParameter = 16 });
-            Add(new NiceButton(10, 10 + 30 * i++, 140, 25, ButtonAction.SwitchPage, "765") { ButtonParameter = 17 });
-            Add(new NiceButton(10, 10 + 30 * i++, 140, 25, ButtonAction.SwitchPage, "Mods") { ButtonParameter = 18 });
+            Add(
+                new NiceButton(
+                    10, 
+                    10 + 30 * i++, 
+                    140, 
+                    25, 
+                    ButtonAction.SwitchPage, 
+                    "Dust"
+                ) 
+                { 
+                    ButtonParameter = 16 
+                }
+            );
+            Add(
+                new NiceButton(
+                    10, 
+                    10 + 30 * i++, 
+                    140, 
+                    25, 
+                    ButtonAction.SwitchPage, 
+                    "765"
+                ) 
+                { 
+                    ButtonParameter = 17 
+                }
+            );
+            Add(
+                new NiceButton(
+                    10, 
+                    10 + 30 * i++, 
+                    140, 
+                    25, 
+                    ButtonAction.SwitchPage, 
+                    "Mods"
+                ) 
+                { 
+                    ButtonParameter = 18 
+                }
+            );
             // ## BEGIN - END ## // TAZUO
-            Add(new NiceButton(10, 10 + 30 * i++, 140, 25, ButtonAction.SwitchPage, "TazUO") { ButtonParameter = 19 });
+            Add(
+                new NiceButton(
+                    10, 
+                    10 + 30 * i++, 
+                    140, 
+                    25, 
+                    ButtonAction.SwitchPage, 
+                    "TazUO"
+                ) 
+                { 
+                    ButtonParameter = 19 
+                }
+            );
             // ## BEGIN - END ## // TAZUO
             // ## BEGIN - END ## // BASICSETUP
 
@@ -415,7 +463,6 @@ namespace ClassicUO.Game.UI.Gumps
                 }
             );
             // ## BEGIN - END ## // TAZUO
-
             Add
             (
                 new Line
@@ -3710,6 +3757,7 @@ namespace ClassicUO.Game.UI.Gumps
             // ## BEGIN - END ## // VISUAL HELPERS
             // ## BEGIN - END ## // MISC
             SettingsSection section7 = AddSettingsSection(box, "-----MISC-----");
+            section7.Y = section2.Bounds.Bottom + 80;
             startY = section2.Bounds.Bottom + 40;
 
             section7.Add(_offscreenTargeting = AddCheckBox(null, "Offscreen targeting (always on)", true, startX, startY)); //has no effect but feature list
