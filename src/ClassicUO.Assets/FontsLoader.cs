@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.IO;
 using ClassicUO.Utility;
@@ -36,26 +36,20 @@ namespace ClassicUO.Assets
         {
             public int X, Y, Width, Height;
 
-            public Margin()
-            {
-                this = default;
-            }
-
             public Margin(int x, int y, int width, int height)
             {
                 X = x; Y = y; Width = width; Height = height;
             }
 
+            public int Right => X + Width;
+            public int Bottom => Y + Height;
 
-            public readonly int Right => X + Width;
-            public readonly int Bottom => Y + Height;
-
-            public readonly bool Contains(int x, int y)
+            public bool Contains(int x, int y)
             {
                 return (x >= X && x < Right && y >= Y && y < Bottom);
             }
 
-            public static readonly Margin Empty = new Margin();
+            public static readonly Margin Empty = default(Margin);
         }
 
         struct HtmlStatus
@@ -3052,57 +3046,57 @@ namespace ClassicUO.Assets
                     case HTML_TAG_TYPE.HTT_BODY:
                     case HTML_TAG_TYPE.HTT_BODYBGCOLOR:
 
-                        if (MemoryExtensions.Equals(command, "text", StringComparison.InvariantCultureIgnoreCase))
+                        if (string.Equals(command.ToString(), "text", StringComparison.InvariantCultureIgnoreCase))
                         {
                             ReadColorFromTextBuffer(value, ref info.Color);
                         }
-                        else if (MemoryExtensions.Equals(command, "bgcolor", StringComparison.InvariantCultureIgnoreCase))
+                        else if (string.Equals(command.ToString(), "bgcolor", StringComparison.InvariantCultureIgnoreCase))
                         {
                             if (_htmlStatus.IsHtmlBackgroundColored)
                             {
                                 ReadColorFromTextBuffer(value, ref _htmlStatus.BackgroundColor);
                             }
                         }
-                        else if (MemoryExtensions.Equals(command, "link", StringComparison.InvariantCultureIgnoreCase))
+                        else if (string.Equals(command.ToString(), "link", StringComparison.InvariantCultureIgnoreCase))
                         {
                             ReadColorFromTextBuffer(value, ref _htmlStatus.WebLinkColor);
                         }
-                        else if (MemoryExtensions.Equals(command, "vlink", StringComparison.InvariantCultureIgnoreCase))
+                        else if (string.Equals(command.ToString(), "vlink", StringComparison.InvariantCultureIgnoreCase))
                         {
                             ReadColorFromTextBuffer(value, ref _htmlStatus.VisitedWebLinkColor);
                         }
-                        else if (MemoryExtensions.Equals(command, "leftmargin", StringComparison.InvariantCultureIgnoreCase))
+                        else if (string.Equals(command.ToString(), "leftmargin", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            _htmlStatus.Margins.X = int.Parse(value);
+                            _htmlStatus.Margins.X = int.Parse(value.ToString());
                         }
-                        else if (MemoryExtensions.Equals(command, "topmargin", StringComparison.InvariantCultureIgnoreCase))
+                        else if (string.Equals(command.ToString(), "topmargin", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            _htmlStatus.Margins.Y = int.Parse(value);
+                            _htmlStatus.Margins.Y = int.Parse(value.ToString());
                         }
-                        else if (MemoryExtensions.Equals(command, "rightmargin", StringComparison.InvariantCultureIgnoreCase))
+                        else if (string.Equals(command.ToString(), "rightmargin", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            _htmlStatus.Margins.Width = int.Parse(value);
+                            _htmlStatus.Margins.Width = int.Parse(value.ToString());
                         }
-                        else if (MemoryExtensions.Equals(command, "bottommargin", StringComparison.InvariantCultureIgnoreCase))
+                        else if (string.Equals(command.ToString(), "bottommargin", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            _htmlStatus.Margins.Height = int.Parse(value);
+                            _htmlStatus.Margins.Height = int.Parse(value.ToString());
                         }
 
                         break;
 
                     case HTML_TAG_TYPE.HTT_BASEFONT:
 
-                        if (MemoryExtensions.Equals(command, "color", StringComparison.InvariantCultureIgnoreCase))
+                        if (string.Equals(command.ToString(), "color", StringComparison.InvariantCultureIgnoreCase))
                         {
                             ReadColorFromTextBuffer(value, ref info.Color);
                         }
-                        else if (MemoryExtensions.Equals(command, "size", StringComparison.InvariantCultureIgnoreCase))
+                        else if (string.Equals(command.ToString(), "size", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            if (!byte.TryParse(value, out var font))
+                            if (!byte.TryParse(value.ToString(), out var font))
                             {
-                                if (MemoryExtensions.Equals(value, "big", StringComparison.InvariantCultureIgnoreCase))
+                                if (string.Equals(value.ToString(), "big", StringComparison.InvariantCultureIgnoreCase))
                                     info.Font = 4;
-                                else if (MemoryExtensions.Equals(value, "small", StringComparison.InvariantCultureIgnoreCase))
+                                else if (string.Equals(value.ToString(), "small", StringComparison.InvariantCultureIgnoreCase))
                                     info.Font = 0;
                                 else
                                     info.Font = 1;
@@ -3131,7 +3125,7 @@ namespace ClassicUO.Assets
 
                     case HTML_TAG_TYPE.HTT_A:
 
-                        if (MemoryExtensions.Equals(command, "href", StringComparison.InvariantCultureIgnoreCase))
+                        if (string.Equals(command.ToString(), "href", StringComparison.InvariantCultureIgnoreCase))
                         {
                             info.Flags = UOFONT_UNDERLINE;
                             info.Color = _htmlStatus.WebLinkColor;
@@ -3143,17 +3137,17 @@ namespace ClassicUO.Assets
                     case HTML_TAG_TYPE.HTT_P:
                     case HTML_TAG_TYPE.HTT_DIV:
 
-                        if (MemoryExtensions.Equals(command, "align", StringComparison.InvariantCultureIgnoreCase))
+                        if (string.Equals(command.ToString(), "align", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            if (MemoryExtensions.Equals(value, "left", StringComparison.InvariantCultureIgnoreCase))
+                            if (string.Equals(value.ToString(), "left", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 info.Align = TEXT_ALIGN_TYPE.TS_LEFT;
                             }
-                            else if (MemoryExtensions.Equals(value, "center", StringComparison.InvariantCultureIgnoreCase))
+                            else if (string.Equals(value.ToString(), "center", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 info.Align = TEXT_ALIGN_TYPE.TS_CENTER;
                             }
-                            else if (MemoryExtensions.Equals(value, "right", StringComparison.InvariantCultureIgnoreCase))
+                            else if (string.Equals(value.ToString(), "right", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 info.Align = TEXT_ALIGN_TYPE.TS_RIGHT;
                             }
@@ -3171,7 +3165,7 @@ namespace ClassicUO.Assets
         {
             foreach (KeyValuePair<ushort, WebLink> ll in _webLinks)
             {
-                if (link.SequenceEqual(ll.Value.Link))
+                if (link.SequenceEqual(ll.Value.Link.AsSpan()))
                 {
                     if (ll.Value.IsVisited)
                     {
@@ -3221,7 +3215,7 @@ namespace ClassicUO.Assets
                         int startIndex = buffer[1] == '0' && buffer[2] == 'x' ? 3 : 1;
 
                         uint.TryParse(
-                            buffer.Slice(startIndex),
+                            buffer.Slice(startIndex).ToString(),
                             NumberStyles.HexNumber,
                             CultureInfo.InvariantCulture,
                             out var cc
@@ -3239,76 +3233,76 @@ namespace ClassicUO.Assets
                 }
                 else
                 {
-                    if (MemoryExtensions.Equals(buffer, "red", StringComparison.InvariantCultureIgnoreCase))
+                    if (string.Equals(buffer.ToString(), "red", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0x0000FFFF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "cyan", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "cyan", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0xFFFF00FF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "blue", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "blue", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0xFF0000FF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "darkblue", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "darkblue", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0xA00000FF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "lightblue", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "lightblue", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0xE6D8ADFF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "purple", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "purple", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0x800080FF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "yellow", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "yellow", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0x00FFFFFF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "lime", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "lime", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0x00FF00FF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "magenta", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "magenta", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0xFF00FFFF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "white", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "white", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0xFFFEFEFF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "silver", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "silver", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0xC0C0C0FF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "grey", StringComparison.InvariantCultureIgnoreCase) ||
-                             MemoryExtensions.Equals(buffer, "gray", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "grey", StringComparison.InvariantCultureIgnoreCase) ||
+                             string.Equals(buffer.ToString(), "gray", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0x808080FF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "black", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "black", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0x010101FF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "orange", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "orange", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0x00A5FFFF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "brown", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "brown", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0x2A2AA5FF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "maroon", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "maroon", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0x000080FF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "green", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "green", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0x008000FF;
                     }
-                    else if (MemoryExtensions.Equals(buffer, "olive", StringComparison.InvariantCultureIgnoreCase))
+                    else if (string.Equals(buffer.ToString(), "olive", StringComparison.InvariantCultureIgnoreCase))
                     {
                         color = 0x008080FF;
                     }

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Assets;
 using ClassicUO.Configuration;
@@ -119,9 +119,12 @@ namespace ClassicUO
             Log.Trace("Loading plugins...");
             PluginHost?.Initialize();
 
-            foreach (string p in Settings.GlobalSettings.Plugins)
+            if (!Settings.GlobalSettings.UseExternalPluginHost)
             {
-                Plugin.Create(p);
+                foreach (string p in Settings.GlobalSettings.Plugins)
+                {
+                    Plugin.Create(p);
+                }
             }
             _pluginsInitialized = true;
 

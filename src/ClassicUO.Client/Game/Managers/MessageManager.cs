@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Assets;
 using ClassicUO.Configuration;
@@ -40,6 +40,7 @@ namespace ClassicUO.Game.Managers
     internal sealed class MessageManager
     {
         private readonly World _world;
+        private PromptData _promptData;
 
         public event EventHandler<PromptData> ServerPromptChanged;
 
@@ -48,10 +49,10 @@ namespace ClassicUO.Game.Managers
 
         public PromptData PromptData
         {
-            get => field;
+            get => _promptData;
             set
             {
-                field = value;
+                _promptData = value;
                 ServerPromptChanged?.Invoke(this, value);
             }
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,18 +26,18 @@ Console.WriteLine("NAME: {0}", versionName);
 
 Console.WriteLine("Starting to create manifest");
 var releases = CreateManifestReleaseList(cuoBinPath, version, versionName);
-var stream = CreateManfest(releases);
+var manifestStream = CreateManfest(releases);
 
-using (var reader = new StreamReader(stream, Encoding.UTF8, true))
+using (var reader = new StreamReader(manifestStream, Encoding.UTF8, true))
 {
-    stream.Seek(0, SeekOrigin.Begin);
+    manifestStream.Seek(0, SeekOrigin.Begin);
 
     File.WriteAllText("manifest.xml", reader.ReadToEnd(), Encoding.UTF8);
 }
 
 Console.WriteLine("Manifest created!");
 
-List<ManifestRelease> CreateManifestReleaseList(string cuo_path, string version, string name)
+List<ManifestRelease> CreateManifestReleaseList(string cuo_path, string releaseVersion, string releaseName)
 {
     var list = new List<ManifestRelease>();
     var dir = new DirectoryInfo(cuo_path);
@@ -47,13 +47,13 @@ List<ManifestRelease> CreateManifestReleaseList(string cuo_path, string version,
         return list;
     }
 
-    var release = new ManifestRelease(version, name, new List<HashFile>());
+    var release = new ManifestRelease(releaseVersion, releaseName, new List<HashFile>());
 
     foreach (var f in dir.GetFiles("*.*", SearchOption.AllDirectories)
         .Where(s => !ecludingList.Contains(s.Name)))
     {
         var path = f.FullName.Remove(0, cuo_path.Length);
-        if (path.StartsWith(Path.DirectorySeparatorChar))
+        if (path.StartsWith(Path.DirectorySeparatorChar.ToString()))
         {
             path = path.Remove(0, 1);
         }
@@ -68,10 +68,10 @@ List<ManifestRelease> CreateManifestReleaseList(string cuo_path, string version,
     return list;
 }
 
-Stream CreateManfest(List<ManifestRelease> releases)
+Stream CreateManfest(List<ManifestRelease> releasesList)
 {
-    var stream = new MemoryStream();
-    var xml = new XmlTextWriter(stream, Encoding.UTF8)
+    var memStream = new MemoryStream();
+    var xml = new XmlTextWriter(memStream, Encoding.UTF8)
     {
         Formatting = Formatting.Indented,
         IndentChar = '\t',
@@ -80,20 +80,20 @@ Stream CreateManfest(List<ManifestRelease> releases)
 
     xml.WriteStartDocument(true);
     xml.WriteStartElement("releases");
-    releases.ForEach(s => s.Save(xml));
+    releasesList.ForEach(s => s.Save(xml));
     xml.WriteEndElement();
     xml.WriteEndDocument();
 
     xml.Flush();
 
-    return stream;
+    return memStream;
 }
 
 string CalculateMD5(string filename)
 {
-    using (var stream = File.OpenRead(filename))
+    using (var fileStream = File.OpenRead(filename))
     {
-        var hash = md5.ComputeHash(stream);
+        var hash = md5.ComputeHash(fileStream);
         return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
 }

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Utility;
 using System;
@@ -38,7 +38,7 @@ namespace ClassicUO.Network.Encryption
         {
             if (version == ClientVersion.CV_200X)
             {
-                return (EncryptionType.BLOWFISH__2_0_3, [0x2D13A5FC, 0x2D13A5FD, 0xA39D527F]);
+                return (EncryptionType.BLOWFISH__2_0_3, new uint[] { 0x2D13A5FC, 0x2D13A5FD, 0xA39D527F });
             }
 
             int a = ((int)version >> 24) & 0xFF;
@@ -55,15 +55,15 @@ namespace ClassicUO.Network.Encryption
             switch (version)
             {
                 case < (ClientVersion)((1 & 0xFF) << 24 | (25 & 0xFF) << 16 | (35 & 0xFF) << 8 | 0 & 0xFF):
-                    return (EncryptionType.OLD_BFISH, [key1, key2, key3]);
+                    return (EncryptionType.OLD_BFISH, new uint[] { key1, key2, key3 });
                 case (ClientVersion)((1 & 0xFF) << 24 | (25 & 0xFF) << 16 | (36 & 0xFF) << 8 | 0 & 0xFF):
-                    return (EncryptionType.BLOWFISH__1_25_36, [key1, key2, key3]);
+                    return (EncryptionType.BLOWFISH__1_25_36, new uint[] { key1, key2, key3 });
                 case <= ClientVersion.CV_200:
-                    return (EncryptionType.BLOWFISH, [key1, key2, key3]);
+                    return (EncryptionType.BLOWFISH, new uint[] { key1, key2, key3 });
                 case <= (ClientVersion)((2 & 0xFF) << 24 | (0 & 0xFF) << 16 | (3 & 0xFF) << 8 | 0 & 0xFF):
-                    return (EncryptionType.BLOWFISH__2_0_3, [key1, key2, key3]);
+                    return (EncryptionType.BLOWFISH__2_0_3, new uint[] { key1, key2, key3 });
                 default:
-                    return (EncryptionType.TWOFISH_MD5, [key1, key2, key3]);
+                    return (EncryptionType.TWOFISH_MD5, new uint[] { key1, key2, key3 });
             }
         }
 

@@ -8,6 +8,12 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml;
+// ## BEGIN - END ## // MACROS
+using ClassicUO.Dust765.External;
+// ## BEGIN - END ## // MACROS
+// ## BEGIN - END ## // MODERNCOOLDOWNBAR
+using ClassicUO.Dust765.Dust765;
+// ## BEGIN - END ## // MODERNCOOLDOWNBAR
 using ClassicUO.Configuration.Json;
 using ClassicUO.Game;
 using ClassicUO.Game.Data;
@@ -254,6 +260,8 @@ namespace ClassicUO.Configuration
 
         public int GridLootType { get; set; } // 0 = none, 1 = only grid, 2 = both
 
+        public bool UseGridLayoutContainerGumps { get; set; } = true;
+
         public bool ReduceFPSWhenInactive { get; set; } = true;
 
         public bool OverrideAllFonts { get; set; }
@@ -285,6 +293,52 @@ namespace ClassicUO.Configuration
 
         public bool IgnoreStaminaCheck { get; set; } = false;
 
+        // ## BEGIN - END ## 
+        public bool ColorStealth { get; set; }
+        public ushort StealthHue { get; set; } = 0x0044;
+        public int StealthNeonType { get; set; } = 0; // 0 = off, 1 = white, 2 = pink, 3 = ice, 4 = fire
+        public int BlockerType { get; set; } = 0; // 0 = off, 1 = stump, 2 = tile
+        public bool ColorBlockerTile { get; set; }
+        public ushort BlockerTileHue { get; set; } = 0x0044;
+        public int TreeType { get; set; } = 0; // 0 = off, 1 = stump, 2 = tile
+        public bool ColorTreeTile { get; set; }
+        public ushort TreeTileHue { get; set; } = 0x0044;
+        public int GlowingWeaponsType { get; set; } = 0; // 0 = off, 1 = white, 2 = pink, 3 = ice, 4 = fire, 5 = custom
+        public ushort HighlightGlowingWeaponsTypeHue { get; set; } = 0x0044;
+        public bool BlockWoS { get; set; } = false;
+        public bool BlockWoSFelOnly { get; set; } = false;
+        public uint BlockWoSArt { get; set; } = 1872;
+        public bool BlockWoSArtForceAoS { get; set; } = false;
+        public bool BlockEnergyF { get; set; } = false;
+        public bool BlockEnergyFFelOnly { get; set; } = false;
+        public uint BlockEnergyFArt { get; set; } = 1872;
+        public bool BlockEnergyFArtForceAoS { get; set; } = false;
+        public bool WireFrameView { get; set; } = false;
+        public bool HueImpassableView { get; set; } = false;
+        public ushort HueImpassableViewHue { get; set; } = 0x0044;
+        public bool TransparentHousesEnabled { get; set; } = false;
+        public int TransparentHousesZ { get; set; }
+        public int TransparentHousesTransparency { get; set; }
+        public bool InvisibleHousesEnabled { get; set; } = false;
+        public int InvisibleHousesZ { get; set; }
+        public int DontRemoveHouseBelowZ { get; set; } = 6;
+        public bool DrawMobilesWithSurfaceOverhead { get; set; } = false;
+        public bool IgnoreCoTEnabled { get; set; } = false;
+        public bool ShowMapCloseFriend { get; set; }
+        public bool AutoAvoidObstacules { get; set; } = true;
+        public bool AutoAvoidMobiles { get; set; }
+        [JsonConverter(typeof(Point2Converter))] public Point BandageGumpOffset { get; set; } = new Point(0, 0);
+        public bool BandageGump { get; set; }
+        public bool BandageGumpUpDownToggle { get; set; } = false;
+        public bool ModernCooldwonBar_locked { get; set; } = false;
+        public bool OnCastingGump { get; set; }
+        public bool OnCastingGump_hidden { get; set; } = false;
+        public bool ShowAllLayers { get; set; }
+        public bool ShowAllLayersPaperdoll { get; set; }
+        public int ShowAllLayersPaperdoll_X { get; set; } = 166;
+        public bool VisualResponseManager { get; set; } = false;
+        // ## BEGIN - END ## 
+
         public bool ShowJournalClient { get; set; } = true;
         public bool ShowJournalObjects { get; set; } = true;
         public bool ShowJournalSystem { get; set; } = true;
@@ -314,6 +368,52 @@ namespace ClassicUO.Configuration
         public bool WorldMapShowGridIfZoomed { get; set; } = true;
         public bool WorldMapAllowPositionalTarget { get; set; } = false;
         public bool ShowDPSWithDamageNumbers { get; set; } = true;
+
+        public ushort DamageHueSelf { get; set; } = 0x0034;
+        public ushort DamageHuePet { get; set; } = 0x0034;
+        public ushort DamageHueAlly { get; set; } = 0x0059;
+        public ushort DamageHueLastAttack { get; set; } = 0x0021;
+        public ushort DamageHueOther { get; set; } = 0x0021;
+
+        public byte GridContainersScale { get; set; } = 100;
+        public bool GridContainerScaleItems { get; set; }
+        public byte GridBorderAlpha { get; set; } = 100;
+        public ushort GridBorderHue { get; set; } = 0;
+        public byte GridContainerOpacity { get; set; } = 95;
+        public ushort AltGridContainerBackgroundHue { get; set; } = 0;
+        public bool Grid_UseContainerHue { get; set; }
+        public int Grid_DefaultRows { get; set; } = 5;
+        public int Grid_DefaultColumns { get; set; } = 5;
+        public bool Grid_HideBorder { get; set; }
+        public int GridSlotLineStyle { get; set; } = 1;
+        public int Grid_BorderStyle { get; set; }
+
+        // ## BEGIN - END ## // TAZUO
+        public ushort HiddenBodyHue { get; set; } = 0x038E;
+        public byte HiddenBodyAlpha { get; set; } = 40;
+        #region COOLDOWNS
+        public int CoolDownX { get; set; } = 50;
+        public int CoolDownY { get; set; } = 50;
+
+        public List<ushort> Condition_Hue { get; set; } = new List<ushort>();
+        public List<string> Condition_Label { get; set; } = new List<string>();
+        public List<int> Condition_Duration { get; set; } = new List<int>();
+        public List<string> Condition_Trigger { get; set; } = new List<string>();
+        public List<int> Condition_Type { get; set; } = new List<int>();
+        public int CoolDownConditionCount
+        {
+            get
+            {
+                return Condition_Hue.Count;
+            }
+            set { }
+        }
+        #endregion
+        #region IMPROVED BUFF BAR
+        public bool UseImprovedBuffBar { get; set; } = true;
+        public ushort ImprovedBuffBarHue { get; set; } = 905;
+        #endregion
+        // ## BEGIN - END ## // TAZUO
 
         public static uint GumpsVersion { get; private set; }
 
@@ -534,12 +634,55 @@ namespace ClassicUO.Configuration
                             switch (type)
                             {
                                 case GumpType.Buff:
-                                    gump = new BuffGump(world);
+                                    
+                                    // ## BEGIN - END ## // TAZUO
+                                    //gump = new BuffGump();
+                                    // ## BEGIN - END ## // TAZUO
+                                    if (ProfileManager.CurrentProfile.UseImprovedBuffBar)
+                                        gump = new ImprovedBuffGump(world);
+                                    else
+                                        gump = new BuffGump(world);
+                                    // ## BEGIN - END ## // TAZUO
+
+                                    break;
+                                // ## BEGIN - END ## // MODERNCOOLDOWNBAR
+                                case GumpType.ECBuffGump:
+                                    gump = new ECBuffGump(world);
 
                                     break;
 
+                                case GumpType.ECDebuffGump:
+                                    gump = new ECDebuffGump(world);
+
+                                    break;
+
+                                case GumpType.ECStateGump:
+                                    gump = new ECStateGump(world);
+
+                                    break;
+
+                                case GumpType.ModernCooldownBar:
+                                    gump = new ModernCooldownBar(world);
+
+                                    break;
+                                // ## BEGIN - END ## // MODERNCOOLDOWNBAR
                                 case GumpType.Container:
                                     gump = new ContainerGump(world);
+
+                                    break;
+
+                                case GumpType.GridContainer:
+                                    ushort gridGraphic = 0x003C;
+                                    string gridGraphicStr = xml.GetAttribute("graphic");
+                                    if (!string.IsNullOrEmpty(gridGraphicStr))
+                                    {
+                                        ushort.TryParse(gridGraphicStr, out gridGraphic);
+                                    }
+                                    if (gridGraphic == 0)
+                                    {
+                                        gridGraphic = 0x003C;
+                                    }
+                                    gump = new GridContainerGump(world, serial, gridGraphic);
 
                                     break;
 

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Input;
@@ -15,9 +15,14 @@ namespace ClassicUO.Game.UI.Gumps
         private readonly int _minH;
         private readonly int _minW;
 
-        public class ResizeCompletedEventArgs(Point beforeResize)
+        public class ResizeCompletedEventArgs
         {
-            public Point BeforeResize { get; } = beforeResize; // readonly
+            public Point BeforeResize { get; }
+
+            public ResizeCompletedEventArgs(Point beforeResize)
+            {
+                BeforeResize = beforeResize;
+            }
         }
 
         // Declare the delegate (if using non-generic pattern).

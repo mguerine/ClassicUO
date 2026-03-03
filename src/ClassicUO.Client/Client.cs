@@ -1,9 +1,11 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Assets;
 using ClassicUO.Configuration;
+using ClassicUO.Dust765.Dust765;
 using ClassicUO.Game;
 using ClassicUO.Game.Data;
+using ClassicUO.Game.Managers;
 using ClassicUO.IO;
 using ClassicUO.Network;
 using ClassicUO.Network.Encryption;
@@ -94,6 +96,7 @@ namespace ClassicUO
             LightColors.LoadLights();
 
             World = new World();
+            CoolDownBarManager.Bind(World);
             GameCursor = new GameCursor(World);
         }
 
@@ -195,6 +198,10 @@ namespace ClassicUO
             StaticFilters.Load(FileManager.TileData);
             BuffTable.Load();
             ChairTable.Load();
+
+            // ## BEGIN - END ## // MODERNCOOLDOWNBAR
+            BuffFilters.Load();
+            // ## BEGIN - END ## // MODERNCOOLDOWNBAR
 
             //ATTENTION: you will need to enable ALSO ultimalive server-side, or this code will have absolutely no effect!
             UltimaLive.Enable();

@@ -1,7 +1,8 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Assets;
 using ClassicUO.Configuration;
+using ClassicUO.Game;
 using ClassicUO.Renderer;
 using ClassicUO.Utility.Collections;
 using Microsoft.Xna.Framework;
@@ -81,12 +82,8 @@ namespace ClassicUO.Game.GameObjects
             if (ProfileManager.CurrentProfile.ShowDPSWithDamageNumbers && Parent != null)
                 dmgString += $" (DPS: {Parent.GetCurrentDPS()})";
 
-            text_obj.RenderedText = RenderedText.Create(
-                dmgString,
-                (ushort)(ReferenceEquals(Parent, _world.Player) ? 0x0034 : 0x0021),
-                3,
-                false
-            );
+            ushort hue = GetDamageHueForEntity(_world, Parent);
+            text_obj.RenderedText = RenderedText.Create(dmgString, hue, 3, false);
 
             text_obj.Time = Time.Ticks + 1500;
 
@@ -244,6 +241,38 @@ namespace ClassicUO.Game.GameObjects
             }
 
             _messages.Clear();
+        }
+
+        private static ushort GetDamageHueForEntity(World world, GameObject parent)
+        {
+            if (parent == null || world?.Player == null)
+            {
+                return 0x0021;
+            }
+
+            Profile profile = ProfileManager.CurrentProfile;
+            if (profile == null)
+            {
+                return ReferenceEquals(parent, world.Player) ? (ushort)0x0034 : (ushort)0x0021;
+            }
+
+            if (ReferenceEquals(parent, world.Player))
+            {
+                return profile.DamageHueSelf;
+            }
+
+            uint serial = (parent as Entity)?.Serial ?? 0;
+            if (world.TargetManager != null && serial == world.TargetManager.LastAttack)
+            {
+                return profile.DamageHueLastAttack;
+            }
+
+            if (world.Party != null && world.Party.Contains(serial))
+            {
+                return profile.DamageHueAlly;
+            }
+
+            return profile.DamageHueOther;
         }
     }
 }

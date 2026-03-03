@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.IO;
 using ClassicUO.Utility;
@@ -590,13 +590,13 @@ namespace ClassicUO.Assets
                             continue;
                         }
 
-                        _bodyConvInfos[index] = new BodyConvInfo()
+                        _bodyConvInfos[index] = new BodyConvInfo
                         {
                             FileIndex = i,
                             Graphic = (ushort)body,
-                            // TODO: fix for UOFileManager.Version < ClientVersion.CV_500A
                             AnimType = CalculateTypeByGraphic((ushort)body, i),
-                            MountHeight = mountedHeightOffset
+                            MountHeight = mountedHeightOffset,
+                            Hue = BodyConvInfo.INVALID_HUE
                         };
                     }
                 }
@@ -830,8 +830,8 @@ namespace ClassicUO.Assets
 
                 var uopInfo = new UopInfo();
                 var j = 0;
-                foreach (ref var idx in uopInfo.ReplacedAnimations)
-                    idx = j++;
+                for (int i = 0; i < MAX_ACTIONS; i++)
+                    uopInfo.ReplacedAnimations[i] = j++;
 
                 if (replaces != 48 && replaces != 68)
                 {
@@ -1267,7 +1267,8 @@ namespace ClassicUO.Assets
                     lastFrameId = frameData[i].FrameID;
                 }
 
-                frameData = CollectionsMarshal.AsSpan(list);
+                var frameArray = list.ToArray();
+                frameData = frameArray.AsSpan();
                 var maxFrameCount = frameData.Length;
 
                 // Looks like the min amount of frames is 10 for equipment
@@ -1733,19 +1734,21 @@ namespace ClassicUO.Assets
         public int FileIndex;
         public AnimationGroupsType AnimType;
         public ushort Graphic;
-        public ushort Hue = INVALID_HUE;
+        public ushort Hue;
         public sbyte MountHeight;
         public const ushort INVALID_HUE = 0xFF;
-
-        public BodyConvInfo()
-        {
-        }
     }
 
-    [InlineArray(AnimationsLoader.MAX_ACTIONS)]
-    struct ReplacedAnimArray
+    [StructLayout(LayoutKind.Sequential)]
+    unsafe struct ReplacedAnimArray
     {
-        private int _a;
+        public fixed int _a[80];
+
+        public ref int this[int i]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { fixed (int* p = _a) return ref p[i]; }
+        }
     }
 
     struct UopInfo

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Configuration;
 using ClassicUO.Game.Data;
@@ -436,7 +436,7 @@ namespace ClassicUO.Game.UI.Gumps
         {
             if (TextBoxControl != null)
             {
-                int lines = TextBoxControl.Text.Count('\n') + 1;
+                int lines = (TextBoxControl.Text ?? "").Split('\n').Length;
 
                 // the chat mode is always on the left and on the bottom
                 _currentChatModeLabel.X = CHAT_X_OFFSET;

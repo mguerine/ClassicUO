@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using System;
 using System.IO;
@@ -26,13 +26,17 @@ namespace ClassicUO.Game.UI.Gumps
         private readonly bool _hideIfEmpty;
         private HitBox _hitBox;
         private bool _isMinimized;
+        private readonly bool _showGridToggle;
+        private NiceButton _gridViewButton;
 
         internal const int CORPSES_GUMP = 0x0009;
 
         public ContainerGump(World world) : base(world, 0, 0) { }
 
-        public ContainerGump(World world, uint serial, ushort gumpid, bool playsound) : base(world, serial, 0)
+        public ContainerGump(World world, uint serial, ushort gumpid, bool playsound, bool showGridToggle = false)
+            : base(world, serial, 0)
         {
+            _showGridToggle = showGridToggle;
             Item item = world.Items.Get(serial);
 
             if (item == null)
@@ -198,6 +202,30 @@ namespace ClassicUO.Game.UI.Gumps
 
             Width = _gumpPicContainer.Width = (int)(_gumpPicContainer.Width * scale);
             Height = _gumpPicContainer.Height = (int)(_gumpPicContainer.Height * scale);
+
+            if (_showGridToggle)
+            {
+                _gridViewButton?.Dispose();
+                _gridViewButton = new NiceButton(Width - 24, 2, 20, 20, ButtonAction.Activate, "Grid")
+                {
+                    IsSelectable = false
+                };
+                _gridViewButton.SetTooltip("Open as grid container");
+                _gridViewButton.MouseUp += (s, e) =>
+                {
+                    if (e.Button == MouseButtonType.Left)
+                    {
+                        UIManager.GetGump<ContainerGump>(LocalSerial)?.Dispose();
+                        UIManager.Add(new GridContainerGump(World, LocalSerial, Graphic)
+                        {
+                            X = X,
+                            Y = Y
+                        });
+                        Dispose();
+                    }
+                };
+                Add(_gridViewButton);
+            }
         }
 
         private void HitBoxOnMouseUp(object sender, MouseEventArgs e)

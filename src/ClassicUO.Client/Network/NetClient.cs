@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Network.Encryption;
 using ClassicUO.Utility;
@@ -159,7 +159,7 @@ namespace ClassicUO.Network
         {
             if (_socket == null)
             {
-                return ArraySegment<byte>.Empty;
+                return default(ArraySegment<byte>);
             }
 
             try
@@ -168,7 +168,7 @@ namespace ClassicUO.Network
 
                 if (size <= 0)
                 {
-                    return ArraySegment<byte>.Empty;
+                    return default(ArraySegment<byte>);
                 }
 
                 Statistics.TotalBytesReceived += (uint)size;
@@ -208,7 +208,7 @@ namespace ClassicUO.Network
                 }
             }
 
-            return ArraySegment<byte>.Empty;
+            return default(ArraySegment<byte>);
         }
 
         public void Flush()
@@ -320,7 +320,7 @@ namespace ClassicUO.Network
                 Disconnect();
                 Disconnected?.Invoke(this, SocketError.SocketError);
 
-                return ArraySegment<byte>.Empty;
+                return default(ArraySegment<byte>);
             }
 
             return new ArraySegment<byte>(_uncompressedBuffer, 0, size);

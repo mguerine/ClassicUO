@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 namespace ClassicUO.Game.Data
 {
@@ -9,9 +9,15 @@ namespace ClassicUO.Game.Data
         Unicode
     }
 
-    internal readonly struct PromptData(ConsolePrompt prompt, ulong data)
+    internal readonly struct PromptData
     {
-        public readonly ConsolePrompt Prompt = prompt;
-        public readonly ulong Data = data;
+        public readonly ConsolePrompt Prompt;
+        public readonly ulong Data;
+
+        public PromptData(ConsolePrompt prompt, ulong data)
+        {
+            Prompt = prompt;
+            Data = data;
+        }
     }
 }

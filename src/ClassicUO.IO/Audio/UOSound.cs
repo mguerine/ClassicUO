@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using System;
 
@@ -60,7 +60,7 @@ namespace ClassicUO.IO.Audio
 
         protected override ArraySegment<byte> GetBuffer()
         {
-            return _waveBuffer;
+            return new ArraySegment<byte>(_waveBuffer);
         }
     }
 }

@@ -4,6 +4,11 @@ using ClassicUO.Assets;
 using ClassicUO.Configuration;
 using ClassicUO.Game;
 using ClassicUO.Game.Data;
+// ## BEGIN - END ## // VISUAL HELPERS
+// ## BEGIN - END ## // MISC
+using ClassicUO.Dust765.Dust765;
+// ## BEGIN - END ## // MISC
+// ## BEGIN - END ## // VISUAL HELPERS
 using ClassicUO.Game.GameObjects;
 using ClassicUO.Game.Managers;
 using ClassicUO.Game.Scenes;
@@ -364,6 +369,10 @@ namespace ClassicUO.Network
                 (TargetType)p.ReadUInt8()
             );
 
+            // ## BEGIN - END ## // ONCASTINGGUMP
+            GameActions.iscasting = false;
+            // ## BEGIN - END ## // ONCASTINGGUMP
+
             if (world.Party.PartyHealTimer < Time.Ticks && world.Party.PartyHealTarget != 0)
             {
                 world.TargetManager.Target(world.Party.PartyHealTarget);
@@ -475,6 +484,10 @@ namespace ClassicUO.Network
 
                 if (damage > 0)
                 {
+                    // ## BEGIN - END ## // ONCASTINGGUMP
+                    if (entity == ClassicUO.Client.Game.UO.World.Player)
+                        GameActions.iscasting = false;
+                    // ## BEGIN - END ## // ONCASTINGGUMP
                     world.WorldTextManager.AddDamage(entity, damage);
                 }
             }
@@ -1069,6 +1082,7 @@ namespace ClassicUO.Network
                     }
 
                     UIManager.GetGump<ContainerGump>(cont)?.RequestUpdateContents();
+                    UIManager.GetGump<GridContainerGump>(cont)?.RequestUpdateContents();
 
                     if (
                         top != null
@@ -1524,14 +1538,27 @@ namespace ClassicUO.Network
                         playsound = true;
                     }
 
-                    UIManager.Add(
-                        new ContainerGump(world, item, graphic, playsound)
+                    bool useGrid = ProfileManager.CurrentProfile?.UseGridLayoutContainerGumps ?? true;
+                    if (useGrid)
+                    {
+                        UIManager.GetGump<GridContainerGump>(serial)?.Dispose();
+                        UIManager.Add(new GridContainerGump(world, item.Serial, graphic)
                         {
                             X = x,
-                            Y = y,
-                            InvalidateContents = true
-                        }
-                    );
+                            Y = y
+                        });
+                    }
+                    else
+                    {
+                        UIManager.Add(
+                            new ContainerGump(world, item.Serial, graphic, playsound, true)
+                            {
+                                X = x,
+                                Y = y,
+                                InvalidateContents = true
+                            }
+                        );
+                    }
 
                     UIManager.RemovePosition(serial);
                 }
@@ -1824,6 +1851,7 @@ namespace ClassicUO.Network
             if (SerialHelper.IsValid(item.Container))
             {
                 UIManager.GetGump<ContainerGump>(item.Container)?.RequestUpdateContents();
+                UIManager.GetGump<GridContainerGump>(item.Container)?.RequestUpdateContents();
 
                 UIManager.GetGump<PaperDollGump>(item.Container)?.RequestUpdateContents();
             }
@@ -4754,6 +4782,16 @@ namespace ClassicUO.Network
 
             string arguments = null;
 
+            // ## BEGIN - END ## // ONCASTINGGUMP
+            if (ProfileManager.CurrentProfile.OnCastingGump)
+            {
+                ClassicUO.Client.Game.UO.World.Player?.OnCasting.OnCliloc(cliloc);
+            }
+            // ## BEGIN - END ## // ONCASTINGGUMP
+            // ## BEGIN - END ## // UI/GUMPS
+            ClassicUO.Client.Game.UO.World.Player?.BandageTimer.OnCliloc(cliloc);
+            // ## BEGIN - END ## // UI/GUMPS
+
             if (cliloc == 1008092 || cliloc == 1005445) // value for "You notify them you don't want to join the party" || "You have been added to the party"
             {
                 for (LinkedListNode<Gump> g = UIManager.Gumps.Last; g != null; g = g.Previous)
@@ -5366,9 +5404,11 @@ namespace ClassicUO.Network
 
             try
             {
-                ZLib.Decompress(p.Buffer.Slice(p.Position, (int)clen), decData.AsSpan(0, dlen));
+                var srcLen = (int)clen;
+                var srcArr = p.Buffer.Slice(p.Position, srcLen).ToArray();
+                ZLib.Decompress(srcArr, 0, decData, dlen);
 
-                layout = Encoding.UTF8.GetString(decData.AsSpan(0, dlen));
+                layout = Encoding.UTF8.GetString(decData, 0, dlen);
             }
             finally
             {
@@ -5486,12 +5526,24 @@ namespace ClassicUO.Network
             if (iconID < BuffTable.Table.Length)
             {
                 BuffGump gump = UIManager.GetGump<BuffGump>();
+                // ## BEGIN - END ## // MODERNCOOLDOWNBAR
+                ECBuffGump ecbuffs = UIManager.GetGump<ECBuffGump>();
+                ECDebuffGump ecdebuffs = UIManager.GetGump<ECDebuffGump>();
+                ECStateGump ecstates = UIManager.GetGump<ECStateGump>();
+                ModernCooldownBar cooldowns = UIManager.GetGump<ModernCooldownBar>();
+                // ## BEGIN - END ## // MODERNCOOLDOWNBAR
                 ushort count = p.ReadUInt16BE();
 
                 if (count == 0)
                 {
                     world.Player.RemoveBuff(ic);
                     gump?.RequestUpdateContents();
+                    // ## BEGIN - END ## // MODERNCOOLDOWNBAR
+                    ecbuffs?.RequestUpdateContents();
+                    ecdebuffs?.RequestUpdateContents();
+                    ecstates?.RequestUpdateContents();
+                    cooldowns?.RequestUpdateContents();
+                    // ## BEGIN - END ## // MODERNCOOLDOWNBAR
                 }
                 else
                 {
@@ -5558,11 +5610,21 @@ namespace ClassicUO.Network
 
                         string text = $"<left>{title}{description}{wtf}</left>";
                         bool alreadyExists = world.Player.IsBuffIconExists(ic);
-                        world.Player.AddBuff(ic, BuffTable.Table[iconID], timer, text);
+                        // ## BEGIN - END ## // TAZUO
+                        //World.Player.AddBuff(ic, BuffTable.Table[iconID], timer, text);
+                        // ## BEGIN - END ## // TAZUO
+                        ClassicUO.Client.Game.UO.World.Player.AddBuff(ic, BuffTable.Table[iconID], timer, text, title);
+                        // ## BEGIN - END ## // TAZUO
 
                         if (!alreadyExists)
                         {
                             gump?.RequestUpdateContents();
+                            // ## BEGIN - END ## // MODERNCOOLDOWNBAR
+                            ecbuffs?.RequestUpdateContents();
+                            ecdebuffs?.RequestUpdateContents();
+                            ecstates?.RequestUpdateContents();
+                            cooldowns?.RequestUpdateContents();
+                            // ## BEGIN - END ## // MODERNCOOLDOWNBAR
                         }
                     }
                 }
@@ -5706,6 +5768,27 @@ namespace ClassicUO.Network
             ushort hue = p.ReadUInt16BE();
             Flags flags = (Flags)p.ReadUInt8();
             ushort unk2 = p.ReadUInt16BE();
+
+            // ## BEGIN - END ## // MISC
+            if (graphic == 130 & ProfileManager.CurrentProfile.BlockWoSArtForceAoS)
+            {
+                graphic = Convert.ToUInt16(ProfileManager.CurrentProfile.BlockWoSArt);
+                hue = 945;
+            }
+            if (ProfileManager.CurrentProfile.BlockEnergyFArtForceAoS)
+            {
+                if (graphic >= 14662 && graphic <= 14692) //Regular EField //graphic >= 0x3946 && graphic <= 0x3964
+                {
+                    graphic = Convert.ToUInt16(ProfileManager.CurrentProfile.BlockEnergyFArt);
+                    hue = 293;
+                }
+                if (graphic == 10408 && hue == 0x0125) //Razor CE - WallStaticID - Filters/WallStaticFilter.cs / Razor Enhanced - WallStaticID - Filters.cs / (hue: 0x0125)
+                {
+                    graphic = Convert.ToUInt16(ProfileManager.CurrentProfile.BlockEnergyFArt);
+                    hue = 293;
+                }
+            }
+            // ## BEGIN - END ## // MISC
 
             if (serial != world.Player)
             {
@@ -7066,7 +7149,7 @@ namespace ClassicUO.Network
 
                         if (gparams.Count > 8)
                         {
-                            g.Hue = UInt16Converter.Parse(gparams[8]);
+                            g.Hue = UInt16Converter.Parse(gparams[8].AsSpan());
 
                             if (string.Equals(entry, "picinpicphued", StringComparison.InvariantCultureIgnoreCase))
                             {

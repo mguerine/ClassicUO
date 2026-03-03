@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Game.GameObjects;
 using ClassicUO.Game.Managers;
@@ -218,7 +218,7 @@ namespace ClassicUO.Game
                         if (totalLength <= 0)
                         {
                             //update index lookup AND static size on disk (first 4 bytes lookup, next 4 is statics size)
-                            _UL._filesIdxStatics[mapId].WriteArray(index, [0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00]);
+                            _UL._filesIdxStatics[mapId].WriteArray(index, new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00 });
 
                             Log.Trace($"writing zero length statics to index at 0x{index:X8}");
                         }
@@ -245,8 +245,8 @@ namespace ClassicUO.Game
                             _UL._filesStatics[mapId].WriteArray(lookup, staticsData);
 
                             //update lookup AND index length on disk
-                            Span<byte> idxData =
-                            [
+                            byte[] idxData = new byte[]
+                            {
                                 (byte) lookup,
                                 (byte) (lookup >> 8),
                                 (byte) (lookup >> 16),
@@ -255,10 +255,10 @@ namespace ClassicUO.Game
                                 (byte) (totalLength >> 8),
                                 (byte) (totalLength >> 16),
                                 (byte) (totalLength >> 24),
-                            ];
+                            };
 
                                 //update lookup AND index length on disk
-                                _UL._filesIdxStatics[mapId].WriteArray(block * 12, idxData);
+                                _UL._filesIdxStatics[mapId].WriteArray(block * 12, idxData.AsSpan());
 
                             Chunk mapChunk = world.Map.GetChunk(block);
 
@@ -647,7 +647,7 @@ namespace ClassicUO.Game
             public void WriteArray(long position, ReadOnlySpan<byte> array)
             {
                 _writer.Seek((int)position, SeekOrigin.Begin);
-                _writer.Write(array);
+                _writer.Write(array.ToArray());
                 _writer.Flush();
             }
 

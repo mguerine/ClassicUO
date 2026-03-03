@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -80,15 +80,15 @@ namespace ClassicUO.UnitTests.Utility
 
             tokens = parser.ReadTokens(trim);
             Assert.Equal(4, tokens.Count);
-            Assert.Equal(tokens[0..], ["1", "2", "3", "4"]);
+            Assert.Equal(tokens, new[] { "1", "2", "3", "4" });
 
             tokens = parser.ReadTokens(trim);
             Assert.Equal(4, tokens.Count);
-            Assert.Equal(tokens[0..], ["5", "6", "7", "8"]);
+            Assert.Equal(tokens, new[] { "5", "6", "7", "8" });
 
             tokens = parser.ReadTokens(trim);
             Assert.Equal(4, tokens.Count);
-            Assert.Equal(tokens[0..], ["5 foo", "6 bar", "7", "baz"]);
+            Assert.Equal(tokens, new[] { "5 foo", "6 bar", "7", "baz" });
 
             Assert.True(parser.IsEOF());
         }

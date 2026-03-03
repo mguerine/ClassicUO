@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -121,6 +121,7 @@ namespace ClassicUO
                 mapDictionary.Add(oldLib, newLib);
             }
 
+#if !NET48
             NativeLibrary.SetDllImportResolver(assembly, mapAndLoad);
 
             static IntPtr mapAndLoad(
@@ -137,30 +138,27 @@ namespace ClassicUO
 
                 return NativeLibrary.Load(mappedName, assembly, dllImportSearchPath);
             }
+#endif
 
             static string getPlatformName()
             {
-                if (OperatingSystem.IsWindows())
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     return "windows";
                 }
-                else if (OperatingSystem.IsMacOS())
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
                     return "osx";
                 }
-                else if (OperatingSystem.IsLinux())
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     return "linux";
                 }
-                else if (OperatingSystem.IsFreeBSD())
+                if (RuntimeInformation.OSDescription.IndexOf("FreeBSD", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     return "freebsd";
                 }
-                else
-                {
-                    // What is this platform??
-                    return "unknown";
-                }
+                return "unknown";
             }
         }
     }

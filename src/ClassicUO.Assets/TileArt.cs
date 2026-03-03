@@ -8,14 +8,13 @@ using ClassicUO.IO;
 using ClassicUO.Utility;
 using ClassicUO.Utility.Logging;
 
-namespace ClassicUO.Assets;
-
-
+namespace ClassicUO.Assets
+{
 // ( •_•)>⌐■-■
 // https://github.com/cbnolok/UOETE/blob/master/src/uotileart.cpp
 public sealed class TileArtLoader : UOFileLoader
 {
-    private readonly Dictionary<uint, TileArtInfo> _tileArtInfos = [];
+    private readonly Dictionary<uint, TileArtInfo> _tileArtInfos = new Dictionary<uint, TileArtInfo>();
     private UOFileUop _file;
 
     public TileArtLoader(UOFileManager fileManager) : base(fileManager)
@@ -246,7 +245,7 @@ public sealed class TileArtInfo
 
                 if (!Appearances.TryGetValue(subType, out var dict))
                 {
-                    dict = [];
+                    dict = new Dictionary<uint, uint>();
                     Appearances.Add(subType, dict);
                 }
 
@@ -258,10 +257,8 @@ public sealed class TileArtInfo
                     uint offset = val / 1000;
                     uint body = val % 1000;
 
-                    if (!dict.TryAdd(body, animId + offset))
-                    {
-
-                    }
+                    if (!dict.ContainsKey(body))
+                        dict[body] = animId + offset;
                 }
             }
         }
@@ -320,11 +317,11 @@ public sealed class TileArtInfo
 
     public uint TileId { get; }
     public uint BodyType { get; }
-    public uint[] Lights { get; } = [0, 0];
-    public TAEFlag[] Flags { get; } = [0, 0];
-    public List<(TAEPropID PropType, uint Value)>[] Props { get; } = [[], []];
-    public List<(uint, uint)> StackAliases { get; } = [];
-    public Dictionary<byte, Dictionary<uint, uint>> Appearances { get; } = [];
+    public uint[] Lights { get; } = new uint[] { 0, 0 };
+    public TAEFlag[] Flags { get; } = new TAEFlag[] { 0, 0 };
+    public List<(TAEPropID PropType, uint Value)>[] Props { get; } = new List<(TAEPropID PropType, uint Value)>[] { new List<(TAEPropID PropType, uint Value)>(), new List<(TAEPropID PropType, uint Value)>() };
+    public List<(uint, uint)> StackAliases { get; } = new List<(uint, uint)>();
+    public Dictionary<byte, Dictionary<uint, uint>> Appearances { get; } = new Dictionary<byte, Dictionary<uint, uint>>();
 
 
     public bool TryGetAppearance(uint mobGraphic, out uint appearanceId)
@@ -336,4 +333,5 @@ public sealed class TileArtInfo
         return Appearances.Count > 1 && Appearances.TryGetValue(0, out var appearanceDict) &&
             appearanceDict.TryGetValue(mobGraphic, out appearanceId);
     }
+}
 }

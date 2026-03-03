@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.IO;
 using ClassicUO.Utility;
@@ -241,18 +241,16 @@ namespace ClassicUO.Assets
     }
 
 
-    [InlineArray(32)]
-    public struct ColorTableArray
+    public unsafe struct ColorTableArray
     {
-        private ushort _a0;
-    }
+        public fixed ushort _a[32];
 
-    [InlineArray(8)]
-    public struct HuesBlockArray
-    {
-        private HuesBlock _a0;
+        public ref ushort this[int i]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { fixed (ushort* p = _a) return ref p[i]; }
+        }
     }
-
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct HuesBlock
@@ -261,6 +259,18 @@ namespace ClassicUO.Assets
         public ushort TableStart;
         public ushort TableEnd;
         public unsafe fixed byte Name[20];
+    }
+
+    public unsafe struct HuesBlockArray
+    {
+        private const int HuesBlockSize = 88;
+        private fixed byte _b[8 * HuesBlockSize];
+
+        public ref HuesBlock this[int i]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { fixed (byte* p = _b) return ref System.Runtime.CompilerServices.Unsafe.AsRef<HuesBlock>(p + i * HuesBlockSize); }
+        }
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -283,7 +293,7 @@ namespace ClassicUO.Assets
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct VerdataHuesGroup
     {
-        public readonly uint Header;
+        public uint Header;
         public HuesBlockArray Entries;
     }
 

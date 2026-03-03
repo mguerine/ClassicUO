@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.IO;
 using ClassicUO.Utility;
@@ -74,8 +74,7 @@ namespace ClassicUO.Assets
         public ProfessionLoader Professions { get; }
         public TileArtLoader TileArt { get; }
         public StringDictionaryLoader StringDictionary { get; }
-
-
+        //public StringDictionaryLoader PNGLoader { get; }
 
         public void Dispose()
         {
@@ -164,6 +163,9 @@ namespace ClassicUO.Assets
             TileArt.Load();
             StringDictionary.Load();
             Verdata.Load();
+            // ## BEGIN - END ## // TAZUO
+            //PNGLoader.Load();
+             // ## BEGIN - END ## // TAZUO
 
             ReadArtDefFile();
 
@@ -245,7 +247,7 @@ namespace ClassicUO.Assets
                                 if (buf.Length < vh.Length)
                                     buf = new byte[vh.Length];
 
-                                skill.Name = Encoding.ASCII.GetString(buf.AsSpan(0, (int)(vh.Length - 1)));
+                                skill.Name = Encoding.ASCII.GetString(buf, 0, (int)(vh.Length - 1));
                             }
                         }
                         else if (vh.FileID == 30)
@@ -277,7 +279,7 @@ namespace ClassicUO.Assets
                                     }
 
                                     var textId = verdata.ReadUInt16();
-                                    var str = Encoding.ASCII.GetString(buf.AsSpan(0, 20));
+                                    var str = Encoding.ASCII.GetString(buf, 0, 20);
                                     TileData.LandData[offset + j] = new LandTiles(flags, textId, str);
                                 }
                             }
@@ -312,7 +314,7 @@ namespace ClassicUO.Assets
                                     var hue = verdata.ReadUInt16();
                                     var lightIdx = verdata.ReadUInt16();
                                     var height = verdata.ReadUInt8();
-                                    var str = Encoding.ASCII.GetString(buf.AsSpan(0, 20));
+                                    var str = Encoding.ASCII.GetString(buf, 0, 20);
 
                                     TileData.StaticData[offset + j] = new StaticTiles
                                     (

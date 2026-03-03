@@ -22,7 +22,7 @@ namespace ClassicUO.Utility
 
                 var firstChar = reader.ReadByte();
 
-                Span<ushort> table = new ushort[256 * 256];
+                var table = new ushort[256 * 256];
                 BuildTable(table, firstChar);
 
                 var list = new byte[reader.BaseStream.Length - 4];
@@ -51,7 +51,7 @@ namespace ClassicUO.Utility
             return output;
         }
 
-        static void BuildTable(Span<ushort> table, byte startValue)
+        static void BuildTable(ushort[] table, byte startValue)
         {
             int index = 0;
             byte firstByte = startValue;
@@ -68,7 +68,7 @@ namespace ClassicUO.Utility
                 }
             }
 
-            table.Sort();
+            Array.Sort(table);
         }
 
         static byte[] InternalDecompress(Span<byte> input, uint len)

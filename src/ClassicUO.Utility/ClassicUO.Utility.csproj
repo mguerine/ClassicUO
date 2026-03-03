@@ -2,11 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\external\FNA\FNA.Core.csproj" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
+    <ProjectReference Include="..\..\external\FNA\FNA.NetFramework.csproj" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.10" />
   </ItemGroup>
 
 </Project>

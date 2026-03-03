@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using System;
 using System.Collections.Generic;
@@ -86,6 +86,11 @@ namespace ClassicUO.Game
         private bool _needGraphicUpdate = true;
         private readonly List<Multi> _temp = new List<Multi>();
         private readonly Tooltip _tooltip;
+        // ## BEGIN - END ## // VISUAL HELPERS
+        public static uint _spellTime { get; set; }
+        public static uint _startSpellTime { get; set; }
+        public static RenderedText _spellTimeText { get; set; }
+        // ## BEGIN - END ## // VISUAL HELPERS
         private readonly World _world;
 
         public GameCursor(World world)
@@ -389,7 +394,7 @@ namespace ClassicUO.Game
                             Vector3 hue = new Vector3(0, 1, 1f);
                             sb.DrawString(
                                 Fonts.Bold,
-                                dist,
+                                dist.AsSpan(),
                                 Mouse.Position.X - 26,
                                 Mouse.Position.Y - 21,
                                 hue
@@ -398,7 +403,7 @@ namespace ClassicUO.Game
                             hue.Y = 0;
                             sb.DrawString(
                                 Fonts.Bold,
-                                dist,
+                                dist.AsSpan(),
                                 Mouse.Position.X - 25,
                                 Mouse.Position.Y - 20,
                                 hue
