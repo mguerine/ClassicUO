@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using System.Collections.Generic;
 using System.Linq;
@@ -284,6 +284,7 @@ namespace ClassicUO.Game
                             else if (SerialHelper.IsItem(container.Serial))
                             {
                                 UIManager.GetGump<ContainerGump>(container.Serial)?.RequestUpdateContents();
+                                UIManager.GetGump<GridContainerGump>(container.Serial)?.RequestUpdateContents();
 
                                 if (container.Graphic == 0x2006)
                                 {
@@ -500,6 +501,7 @@ namespace ClassicUO.Game
                 else if (SerialHelper.IsItem(containerSerial))
                 {
                     UIManager.GetGump<ContainerGump>(containerSerial)?.RequestUpdateContents();
+                    UIManager.GetGump<GridContainerGump>(containerSerial)?.RequestUpdateContents();
                 }
 
                 Entity container = Get(containerSerial);

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.IO;
 using ClassicUO.Utility;
@@ -212,7 +212,7 @@ namespace ClassicUO.Assets
             Span<byte> buf = stackalloc byte[40];
             _file.Read(buf);
 
-            name = Encoding.UTF8.GetString(buf);
+            name = Encoding.UTF8.GetString(buf.ToArray());
             data = new byte[entry.Length - 40];
             _file.Read(data);
 

@@ -1130,7 +1130,7 @@ namespace ClassicUO.Game.UI.Gumps
 
                         var h = new byte[4096];
                         int bytesRead;
-                        while ((bytesRead = file.Read(h)) > 0)
+                        while ((bytesRead = file.Read(h, 0, h.Length)) > 0)
                             MD5Behaviour.Update(ref md5Ctx, h.AsSpan(0, bytesRead));
                         MD5Behaviour.Finalize(ref md5Ctx);
 
@@ -1144,7 +1144,7 @@ namespace ClassicUO.Game.UI.Gumps
                     var sum = calculateMd5(mapReader) + calculateMd5(staticsReader);
                     var md5Ctx = new MD5Behaviour.MD5Context();
                     MD5Behaviour.Initialize(ref md5Ctx);
-                    MD5Behaviour.Update(ref md5Ctx, MemoryMarshal.AsBytes<char>(sum));
+                    MD5Behaviour.Update(ref md5Ctx, MemoryMarshal.AsBytes(sum.AsSpan()));
                     MD5Behaviour.Finalize(ref md5Ctx);
                     var strSb = new StringBuilder();
                     for (int i = 0; i < 16; ++i)
@@ -1325,7 +1325,6 @@ namespace ClassicUO.Game.UI.Gumps
                         {
                             ColorType = PngColorType.Palette,
                             CompressionLevel = PngCompressionLevel.DefaultCompression,
-                            SkipMetadata = true,
                             FilterMethod = PngFilterMethod.None,
                             ChunkFilter = PngChunkFilter.ExcludeAll,
                             TransparentColorMode = PngTransparentColorMode.Clear,
@@ -2266,9 +2265,9 @@ namespace ClassicUO.Game.UI.Gumps
 
                 Vector3 hueVector = new(0f, 1f, 1f);
 
-                batcher.DrawString(Fonts.Bold, text, gX + 6, gY + 6, hueVector);
+                batcher.DrawString(Fonts.Bold, text.AsSpan(), gX + 6, gY + 6, hueVector);
                 hueVector = ShaderHueTranslator.GetHueVector(0);
-                batcher.DrawString(Fonts.Bold, text, gX + 5, gY + 5, hueVector);
+                batcher.DrawString(Fonts.Bold, text.AsSpan(), gX + 5, gY + 5, hueVector);
             }
 
             if (_showMouseCoordinates && _lastMousePosition != null)
@@ -2280,7 +2279,7 @@ namespace ClassicUO.Game.UI.Gumps
                 if (_showSextantCoordinates && Sextant.FormatString(new Point(mouseWorldX, mouseWorldY), _map, out var sextantCoords))
                     mouseCoordinateString += "\n" + sextantCoords;
 
-                Vector2 size = Fonts.Regular.MeasureString(mouseCoordinateString);
+                Vector2 size = Fonts.Regular.MeasureString(mouseCoordinateString.AsSpan());
                 int mx = gX + 5;
                 int my = gY + Height - (int)Math.Ceiling(size.Y) - 15;
 
@@ -2289,7 +2288,7 @@ namespace ClassicUO.Game.UI.Gumps
                 batcher.DrawString
                 (
                     Fonts.Bold,
-                    mouseCoordinateString,
+                    mouseCoordinateString.AsSpan(),
                     mx + 1,
                     my + 1,
                     hueVector
@@ -2300,7 +2299,7 @@ namespace ClassicUO.Game.UI.Gumps
                 batcher.DrawString
                 (
                     Fonts.Bold,
-                    mouseCoordinateString,
+                    mouseCoordinateString.AsSpan(),
                     mx,
                     my,
                     hueVector
@@ -2388,7 +2387,7 @@ namespace ClassicUO.Game.UI.Gumps
 
             if (drawName && !string.IsNullOrEmpty(mobile.Name))
             {
-                Vector2 size = Fonts.Regular.MeasureString(mobile.Name);
+                Vector2 size = Fonts.Regular.MeasureString(mobile.Name.AsSpan());
 
                 if (rot.X + size.X / 2 > x + Width - 8)
                 {
@@ -2417,7 +2416,7 @@ namespace ClassicUO.Game.UI.Gumps
                 batcher.DrawString
                 (
                     Fonts.Regular,
-                    mobile.Name,
+                    mobile.Name.AsSpan(),
                     xx + 1,
                     yy + 1,
                     hueVector
@@ -2430,7 +2429,7 @@ namespace ClassicUO.Game.UI.Gumps
                 batcher.DrawString
                 (
                     Fonts.Regular,
-                    mobile.Name,
+                    mobile.Name.AsSpan(),
                     xx,
                     yy,
                     hueVector
@@ -2574,7 +2573,7 @@ namespace ClassicUO.Game.UI.Gumps
             rot.X += x + width;
             rot.Y += y + height;
 
-            Vector2 size = _markerFont.MeasureString(marker.Name);
+            Vector2 size = _markerFont.MeasureString(marker.Name.AsSpan());
 
             if (rot.X + size.X / 2 > x + Width - 8)
             {
@@ -2617,7 +2616,7 @@ namespace ClassicUO.Game.UI.Gumps
             batcher.DrawString
             (
                 _markerFont,
-                marker.Name,
+                marker.Name.AsSpan(),
                 xx + 1,
                 yy + 1,
                 hueVector
@@ -2628,7 +2627,7 @@ namespace ClassicUO.Game.UI.Gumps
             batcher.DrawString
             (
                 _markerFont,
-                marker.Name,
+                marker.Name.AsSpan(),
                 xx,
                 yy,
                 hueVector
@@ -2877,7 +2876,7 @@ namespace ClassicUO.Game.UI.Gumps
             if (_showGroupName)
             {
                 string name = entity.Name ?? ResGumps.OutOfRange;
-                Vector2 size = Fonts.Regular.MeasureString(entity.Name ?? name);
+                Vector2 size = Fonts.Regular.MeasureString((entity.Name ?? name).AsSpan());
 
                 if (rot.X + size.X / 2 > x + Width - 8)
                 {
@@ -2906,7 +2905,7 @@ namespace ClassicUO.Game.UI.Gumps
                 batcher.DrawString
                 (
                     Fonts.Regular,
-                    name,
+                    name.AsSpan(),
                     xx + 1,
                     yy + 1,
                     hueVector
@@ -2917,7 +2916,7 @@ namespace ClassicUO.Game.UI.Gumps
                 batcher.DrawString
                 (
                     Fonts.Regular,
-                    name,
+                    name.AsSpan(),
                     xx,
                     yy,
                     hueVector

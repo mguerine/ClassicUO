@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.IO;
 using ClassicUO.Utility;
@@ -646,17 +646,24 @@ namespace ClassicUO.Assets
         public sbyte Z;
     }
 
-    [InlineArray(64)]
-    public struct MapCellsArray
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public unsafe struct MapCellsArray
     {
-        private MapCells _a0;
+        private const int ElementSize = 3;
+        private fixed byte _b[64 * ElementSize];
+
+        public ref MapCells this[int i]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { fixed (byte* p = _b) return ref Unsafe.AsRef<MapCells>(p + i * ElementSize); }
+        }
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct MapBlock
     {
         public uint Header;
-        public unsafe MapCellsArray Cells;
+        public MapCellsArray Cells;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -686,6 +693,6 @@ namespace ClassicUO.Assets
 
         public static IndexMap Invalid = new IndexMap() { MapAddress = ulong.MaxValue };
 
-        public readonly bool IsValid() => MapAddress != ulong.MaxValue;
+        public bool IsValid() => MapAddress != ulong.MaxValue;
     }
 }

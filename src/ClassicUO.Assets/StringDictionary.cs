@@ -6,8 +6,8 @@ using System.Text;
 using ClassicUO.IO;
 using ClassicUO.Utility;
 
-namespace ClassicUO.Assets;
-
+namespace ClassicUO.Assets
+{
 // https://github.com/cbnolok/UOETE/blob/master/src/uostringdictionary.cpp
 public sealed class StringDictionaryLoader : UOFileLoader
 {
@@ -38,7 +38,7 @@ public sealed class StringDictionaryLoader : UOFileLoader
         using var file = new UOFileUop(path, "build/stringdictionary/string_dictionary.bin");
         file.FillEntries();
 
-        ref readonly var index = ref file.GetValidRefEntry(0);
+        ref var index = ref file.GetValidRefEntry(0);
         if (index.Length == 0)
             return;
 
@@ -60,9 +60,10 @@ public sealed class StringDictionaryLoader : UOFileLoader
         for (var i = 0; i < count; ++i)
         {
             var len = reader.ReadUInt16LE();
-            var str = Encoding.UTF8.GetString(reader.Buffer.Slice(reader.Position, len));
+            var str = Encoding.UTF8.GetString(reader.Buffer.Slice(reader.Position, len).ToArray());
             _strings[i] = str;
             reader.Skip(len);
         }
     }
+}
 }

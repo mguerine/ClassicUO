@@ -547,9 +547,8 @@ namespace ClassicUO.Game.GameObjects
 
         public bool Walk(Direction direction, bool run)
         {
-            if (!ProfileManager.CurrentProfile.AutoAvoidMobiles)
+            if (!ProfileManager.CurrentProfile.AutoAvoidObstacules)
             {
-
                 return WalkNotAvoid(direction, run);
             }
 
@@ -587,6 +586,34 @@ namespace ClassicUO.Game.GameObjects
 
                 sbyte oldZ = z;
                 ushort walkTime = Constants.TURN_DELAY;
+
+                if (IsCardinalDirection(direction))
+                {
+                    if (IsObstacle(direction, x, y, z))
+                    {
+                        Direction newDir = TryToAvoid(direction, x, y, z);
+                        if (!IsObstacle(newDir, x, y, z))
+                        {
+                            direction = newDir;
+                            ClearSteps();
+                            SetInWorldTile((ushort)x, (ushort)y, z);
+                        }
+                        else
+                        {
+                            Direction altDir = TryToAvoidAlt(newDir);
+                            if (!IsObstacle(altDir, x, y, z))
+                            {
+                                direction = altDir;
+                                ClearSteps();
+                                SetInWorldTile((ushort)x, (ushort)y, z);
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
 
                 if ((oldDirection & Direction.Mask) == (direction & Direction.Mask))
                 {
@@ -894,6 +921,48 @@ namespace ClassicUO.Game.GameObjects
             GetGroupForAnimation(this, 0, true);
 
             return true;
+        }
+
+        private static bool IsCardinalDirection(Direction direction)
+        {
+            return direction == Direction.North || direction == Direction.South
+                || direction == Direction.East || direction == Direction.West;
+        }
+
+        private bool IsObstacle(Direction direction, int x, int y, sbyte z)
+        {
+            Direction d = direction;
+            int nx = x;
+            int ny = y;
+            sbyte nz = z;
+            return !Pathfinder.CanWalk(ref d, ref nx, ref ny, ref nz);
+        }
+
+        private Direction TryToAvoid(Direction direction, int x, int y, sbyte z)
+        {
+            switch (direction)
+            {
+                case Direction.North:
+                case Direction.South:
+                    return IsObstacle(Direction.East, x, y, z) ? Direction.West : Direction.East;
+                case Direction.East:
+                case Direction.West:
+                    return IsObstacle(Direction.North, x, y, z) ? Direction.South : Direction.North;
+                default:
+                    return direction;
+            }
+        }
+
+        private static Direction TryToAvoidAlt(Direction attemptedLateral)
+        {
+            switch (attemptedLateral)
+            {
+                case Direction.North: return Direction.South;
+                case Direction.South: return Direction.North;
+                case Direction.East: return Direction.West;
+                case Direction.West: return Direction.East;
+                default: return attemptedLateral;
+            }
         }
     }
 }

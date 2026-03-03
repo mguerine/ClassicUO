@@ -8,12 +8,11 @@ namespace ClassicUO.Game.Data;
 // Attribution
 // Original Class: "Sextant" by RunUO & ServUO contributors
 // Source: https://github.com/ServUO/ServUO/blob/master/Scripts/Items/Tools/Sextant.cs
-internal static partial class Sextant
+internal static class Sextant
 {
-    public static readonly Point InvalidPoint = new(-1, -1);
-    
-    [GeneratedRegex(@"(?<LatDegrees>\d{1,3})[°o\s]*(?<LatMinutes>\d{2})'(?<LatDirection>[NS])[\s,]*(?<LongDegrees>\d{1,3})[°o\s]*(?<LongMinutes>\d{2})'(?<LongDirection>[EW])")]
-    private static partial Regex SextantCoordsRegex();
+    public static readonly Point InvalidPoint = new Point(-1, -1);
+
+    private static readonly Regex SextantCoordsRegex = new Regex(@"(?<LatDegrees>\d{1,3})[°o\s]*(?<LatMinutes>\d{2})'(?<LatDirection>[NS])[\s,]*(?<LongDegrees>\d{1,3})[°o\s]*(?<LongMinutes>\d{2})'(?<LongDirection>[EW])");
 
     /// <summary>
     /// Converts lat/long sextant coords into X,Y point coords
@@ -23,7 +22,7 @@ internal static partial class Sextant
     /// <returns>Point representing the map X/Y on success, or an invalid point on failure</returns>
     public static bool Parse(Map.Map map, string coords, out Point point)
     {
-        Match match = SextantCoordsRegex().Match(coords.Trim());
+        Match match = SextantCoordsRegex.Match(coords.Trim());
         
         point = InvalidPoint;
 

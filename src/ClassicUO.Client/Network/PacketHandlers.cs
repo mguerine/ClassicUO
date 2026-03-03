@@ -1082,6 +1082,7 @@ namespace ClassicUO.Network
                     }
 
                     UIManager.GetGump<ContainerGump>(cont)?.RequestUpdateContents();
+                    UIManager.GetGump<GridContainerGump>(cont)?.RequestUpdateContents();
 
                     if (
                         top != null
@@ -1537,14 +1538,27 @@ namespace ClassicUO.Network
                         playsound = true;
                     }
 
-                    UIManager.Add(
-                        new ContainerGump(world, item, graphic, playsound)
+                    bool useGrid = ProfileManager.CurrentProfile?.UseGridLayoutContainerGumps ?? true;
+                    if (useGrid)
+                    {
+                        UIManager.GetGump<GridContainerGump>(serial)?.Dispose();
+                        UIManager.Add(new GridContainerGump(world, item.Serial, graphic)
                         {
                             X = x,
-                            Y = y,
-                            InvalidateContents = true
-                        }
-                    );
+                            Y = y
+                        });
+                    }
+                    else
+                    {
+                        UIManager.Add(
+                            new ContainerGump(world, item.Serial, graphic, playsound, true)
+                            {
+                                X = x,
+                                Y = y,
+                                InvalidateContents = true
+                            }
+                        );
+                    }
 
                     UIManager.RemovePosition(serial);
                 }
@@ -1837,6 +1851,7 @@ namespace ClassicUO.Network
             if (SerialHelper.IsValid(item.Container))
             {
                 UIManager.GetGump<ContainerGump>(item.Container)?.RequestUpdateContents();
+                UIManager.GetGump<GridContainerGump>(item.Container)?.RequestUpdateContents();
 
                 UIManager.GetGump<PaperDollGump>(item.Container)?.RequestUpdateContents();
             }
@@ -5389,9 +5404,11 @@ namespace ClassicUO.Network
 
             try
             {
-                ZLib.Decompress(p.Buffer.Slice(p.Position, (int)clen), decData.AsSpan(0, dlen));
+                var srcLen = (int)clen;
+                var srcArr = p.Buffer.Slice(p.Position, srcLen).ToArray();
+                ZLib.Decompress(srcArr, 0, decData, dlen);
 
-                layout = Encoding.UTF8.GetString(decData.AsSpan(0, dlen));
+                layout = Encoding.UTF8.GetString(decData, 0, dlen);
             }
             finally
             {
@@ -7132,7 +7149,7 @@ namespace ClassicUO.Network
 
                         if (gparams.Count > 8)
                         {
-                            g.Hue = UInt16Converter.Parse(gparams[8]);
+                            g.Hue = UInt16Converter.Parse(gparams[8].AsSpan());
 
                             if (string.Equals(entry, "picinpicphued", StringComparison.InvariantCultureIgnoreCase))
                             {

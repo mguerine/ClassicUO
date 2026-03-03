@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.IO;
 using ClassicUO.Utility;
@@ -96,7 +96,6 @@ namespace ClassicUO.Assets
             _entries.Clear();
         }
 
-        [return: NotNull]
         public string GetString(int clilocNum, string fallback = null)
         {
             _entries.TryGetValue(clilocNum, out string text);
@@ -104,7 +103,6 @@ namespace ClassicUO.Assets
             return text ?? fallback ?? string.Format(MISSING_CLILOC_TEXT, clilocNum);
         }
 
-        [return: NotNull]
         public string GetString(int clilocNum, bool camelcase, string fallback = "")
         {
             string text = GetString(clilocNum, fallback);
@@ -117,7 +115,6 @@ namespace ClassicUO.Assets
             return text;
         }
 
-        [return: NotNull]
         public unsafe string Translate(int clilocNum, string arg = "", bool capitalize = false)
         {
             string baseCliloc = GetString(clilocNum);

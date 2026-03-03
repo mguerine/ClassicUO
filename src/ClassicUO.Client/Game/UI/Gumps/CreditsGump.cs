@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -54,7 +54,7 @@ Ultima Online(R) 2021 Electronic Arts Inc. All Rights Reserved.
 
             Add(background);
 
-            Vector2 size = Fonts.Regular.MeasureString(CREDITS);
+            Vector2 size = Fonts.Regular.MeasureString(CREDITS.AsSpan());
             _offset.X = (int) (Width / 2f - size.X / 2);
             _offset.Y = Height;
         }
@@ -76,7 +76,7 @@ Ultima Online(R) 2021 Electronic Arts Inc. All Rights Reserved.
 
             Vector3 hueVector = ShaderHueTranslator.GetHueVector(0);
 
-            batcher.DrawString(Fonts.Bold, CREDITS, x + _offset.X, y + _offset.Y, hueVector);
+            batcher.DrawString(Fonts.Bold, CREDITS.AsSpan(), x + _offset.X, y + _offset.Y, hueVector);
 
             return true;
         }

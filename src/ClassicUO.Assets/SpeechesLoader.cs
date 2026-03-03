@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.IO;
 using ClassicUO.Utility;
@@ -47,7 +47,7 @@ namespace ClassicUO.Assets
                         buf = new byte[length];
 
                     file.Read(buf.AsSpan(0, length));
-                    var text = string.Intern(Encoding.UTF8.GetString(buf.AsSpan(0, length)));
+                    var text = string.Intern(Encoding.UTF8.GetString(buf, 0, length));
 
                     entries.Add(new SpeechEntry(id, text));
                 }

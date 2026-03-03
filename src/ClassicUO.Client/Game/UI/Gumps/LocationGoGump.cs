@@ -8,16 +8,9 @@ using Microsoft.Xna.Framework;
 
 namespace ClassicUO.Game.UI.Gumps;
 
-internal partial class LocationGoGump : Gump
+internal class LocationGoGump : Gump
 {
-    /**
-     * Valid inputs:
-     * 3123, 124
-     * 123 4141
-     * 1331:745 
-     */
-    [GeneratedRegex(@"^(?<X>\d+)\s*[,:\s]\s*(?<Y>\d+)$")]
-    private static partial Regex PointCoordsRegex();
+    private static readonly Regex PointCoordsRegex = new Regex(@"^(?<X>\d+)\s*[,:\s]\s*(?<Y>\d+)$");
     
     private readonly World _world;
     private readonly Action<int, int> _goTo;
@@ -120,7 +113,7 @@ internal partial class LocationGoGump : Gump
         point = new Point(-1, -1);
         try
         {
-            var match = PointCoordsRegex().Match(text);
+            var match = PointCoordsRegex.Match(text);
 
             if (!match.Success)
             {

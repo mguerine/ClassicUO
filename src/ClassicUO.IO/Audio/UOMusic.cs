@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Utility.Logging;
 using Microsoft.Xna.Framework.Audio;
@@ -68,7 +68,7 @@ namespace ClassicUO.IO.Audio
 
             Stop();
 
-            return ArraySegment<byte>.Empty;
+            return default;
         }
 
         protected override void OnBufferNeeded(object sender, EventArgs e)

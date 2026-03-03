@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using System;
 using System.Collections.Generic;
@@ -394,7 +394,7 @@ namespace ClassicUO.Game
                             Vector3 hue = new Vector3(0, 1, 1f);
                             sb.DrawString(
                                 Fonts.Bold,
-                                dist,
+                                dist.AsSpan(),
                                 Mouse.Position.X - 26,
                                 Mouse.Position.Y - 21,
                                 hue
@@ -403,7 +403,7 @@ namespace ClassicUO.Game
                             hue.Y = 0;
                             sb.DrawString(
                                 Fonts.Bold,
-                                dist,
+                                dist.AsSpan(),
                                 Mouse.Position.X - 25,
                                 Mouse.Position.Y - 20,
                                 hue

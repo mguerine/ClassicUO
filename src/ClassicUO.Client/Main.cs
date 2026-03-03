@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Configuration;
 using ClassicUO.Game;
@@ -21,7 +21,9 @@ namespace ClassicUO
 {
     internal static class Bootstrap
     {
+#if !NET48
         [UnmanagedCallersOnly(EntryPoint = "Initialize", CallConvs = new Type[] { typeof(CallConvCdecl) })]
+#endif
         static unsafe void Initialize(IntPtr* argv, int argc, HostBindings* hostSetup)
         {
             var args = new string[argc];
@@ -216,7 +218,8 @@ namespace ClassicUO
                         break;
                 }
 
-                Client.Run(pluginHost);
+                IPluginHost host = pluginHost ?? ExternalPluginHost.TryCreate();
+                Client.Run(host);
             }
 
             Log.Trace("Closing...");

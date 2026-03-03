@@ -260,6 +260,8 @@ namespace ClassicUO.Configuration
 
         public int GridLootType { get; set; } // 0 = none, 1 = only grid, 2 = both
 
+        public bool UseGridLayoutContainerGumps { get; set; } = true;
+
         public bool ReduceFPSWhenInactive { get; set; } = true;
 
         public bool OverrideAllFonts { get; set; }
@@ -323,6 +325,7 @@ namespace ClassicUO.Configuration
         public bool DrawMobilesWithSurfaceOverhead { get; set; } = false;
         public bool IgnoreCoTEnabled { get; set; } = false;
         public bool ShowMapCloseFriend { get; set; }
+        public bool AutoAvoidObstacules { get; set; } = true;
         public bool AutoAvoidMobiles { get; set; }
         [JsonConverter(typeof(Point2Converter))] public Point BandageGumpOffset { get; set; } = new Point(0, 0);
         public bool BandageGump { get; set; }
@@ -365,6 +368,25 @@ namespace ClassicUO.Configuration
         public bool WorldMapShowGridIfZoomed { get; set; } = true;
         public bool WorldMapAllowPositionalTarget { get; set; } = false;
         public bool ShowDPSWithDamageNumbers { get; set; } = true;
+
+        public ushort DamageHueSelf { get; set; } = 0x0034;
+        public ushort DamageHuePet { get; set; } = 0x0034;
+        public ushort DamageHueAlly { get; set; } = 0x0059;
+        public ushort DamageHueLastAttack { get; set; } = 0x0021;
+        public ushort DamageHueOther { get; set; } = 0x0021;
+
+        public byte GridContainersScale { get; set; } = 100;
+        public bool GridContainerScaleItems { get; set; }
+        public byte GridBorderAlpha { get; set; } = 100;
+        public ushort GridBorderHue { get; set; } = 0;
+        public byte GridContainerOpacity { get; set; } = 95;
+        public ushort AltGridContainerBackgroundHue { get; set; } = 0;
+        public bool Grid_UseContainerHue { get; set; }
+        public int Grid_DefaultRows { get; set; } = 5;
+        public int Grid_DefaultColumns { get; set; } = 5;
+        public bool Grid_HideBorder { get; set; }
+        public int GridSlotLineStyle { get; set; } = 1;
+        public int Grid_BorderStyle { get; set; }
 
         // ## BEGIN - END ## // TAZUO
         public ushort HiddenBodyHue { get; set; } = 0x038E;
@@ -646,6 +668,21 @@ namespace ClassicUO.Configuration
                                 // ## BEGIN - END ## // MODERNCOOLDOWNBAR
                                 case GumpType.Container:
                                     gump = new ContainerGump(world);
+
+                                    break;
+
+                                case GumpType.GridContainer:
+                                    ushort gridGraphic = 0x003C;
+                                    string gridGraphicStr = xml.GetAttribute("graphic");
+                                    if (!string.IsNullOrEmpty(gridGraphicStr))
+                                    {
+                                        ushort.TryParse(gridGraphicStr, out gridGraphic);
+                                    }
+                                    if (gridGraphic == 0)
+                                    {
+                                        gridGraphic = 0x003C;
+                                    }
+                                    gump = new GridContainerGump(world, serial, gridGraphic);
 
                                     break;
 

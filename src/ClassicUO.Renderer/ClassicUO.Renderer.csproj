@@ -1,15 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ClassicUO.Utility\ClassicUO.Utility.csproj" />
     <ProjectReference Include="..\ClassicUO.Assets\ClassicUO.Assets.csproj" />
-    <ProjectReference Include="..\..\external\FNA\FNA.Core.csproj" />
+    <ProjectReference Include="..\..\external\FNA\FNA.NetFramework.csproj" />
   </ItemGroup>
 
 </Project>

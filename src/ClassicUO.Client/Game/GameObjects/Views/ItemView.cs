@@ -70,7 +70,7 @@ namespace ClassicUO.Game.GameObjects
             }
             // ## BEGIN - END ## // ART / HUE CHANGES
             // ## BEGIN - END ## // MISC
-            if (ProfileManager.CurrentProfile.AutoAvoidMobiles)
+            if (ProfileManager.CurrentProfile.AutoAvoidObstacules)
             {
                 if (StaticFilters.isHumanAndMonster(graphic))
                 {
@@ -82,25 +82,6 @@ namespace ClassicUO.Game.GameObjects
                     {
                         Client.Game.UO.FileManager.TileData.StaticData[Graphic].IsImpassable = false;
                     }
-
-                }
-            }
-
-            // ## BEGIN - END ## // MISC
-            if (ProfileManager.CurrentProfile.AutoAvoidMobiles)
-            {
-                if (StaticFilters.isHumanAndMonster(graphic))
-                {
-                    if (World.Player.Stamina != World.Player.StaminaMax)
-                    {
-                        Client.Game.UO.FileManager.TileData.StaticData[Graphic].IsImpassable = true;
-
-                    }
-                    else
-                    {
-                        Client.Game.UO.FileManager.TileData.StaticData[Graphic].IsImpassable = false;
-                    }
-
                 }
             }
 

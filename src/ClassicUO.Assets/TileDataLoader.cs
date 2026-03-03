@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.IO;
 using ClassicUO.Utility;
@@ -64,7 +64,7 @@ namespace ClassicUO.Assets
                     ushort textId = tileData.ReadUInt16();
 
                     tileData.Read(buf);
-                    var name = string.Intern(Encoding.UTF8.GetString(buf).TrimEnd('\0'));
+                    var name = string.Intern(Encoding.UTF8.GetString(buf.ToArray()).TrimEnd('\0'));
                     LandData[idx] = new LandTiles(flags, textId, name);
                 }
             }
@@ -99,7 +99,7 @@ namespace ClassicUO.Assets
                     byte height = tileData.ReadUInt8();
 
                     tileData.Read(buf);
-                    var name = string.Intern(Encoding.UTF8.GetString(buf).TrimEnd('\0'));
+                    var name = string.Intern(Encoding.UTF8.GetString(buf.ToArray()).TrimEnd('\0'));
 
                     StaticData[idx] = new StaticTiles
                     (

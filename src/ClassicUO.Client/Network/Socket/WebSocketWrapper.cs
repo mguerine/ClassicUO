@@ -33,7 +33,7 @@ sealed class WebSocketWrapper : SocketWrapper
     public override void Connect(Uri uri) => ConnectAsync(uri, _tokenSource).Wait();
 
     public override void Send(byte[] buffer, int offset, int count) =>
-        _webSocket.SendAsync(buffer.AsMemory().Slice(offset, count), WebSocketMessageType.Binary, true, _tokenSource.Token);
+        _webSocket.SendAsync(new ArraySegment<byte>(buffer, offset, count), WebSocketMessageType.Binary, true, _tokenSource.Token);
 
     public override int Read(byte[] buffer)
     {
@@ -81,14 +81,18 @@ sealed class WebSocketWrapper : SocketWrapper
 
     private async Task ConnectWebSocketAsyncCore(Uri uri)
     {
-        // Take control of creating the raw socket, turn off Nagle, also lets us peek at `Available` bytes.
+#if NET48
+        _webSocket = new ClientWebSocket();
+        _webSocket.Options.KeepAliveInterval = TimeSpan.FromSeconds(WS_KEEP_ALIVE_INTERVAL);
+        await _webSocket.ConnectAsync(uri, _tokenSource.Token);
+#else
         _rawSocket = new TcpSocket(SocketType.Stream, ProtocolType.Tcp)
         {
             NoDelay = true
         };
 
         _webSocket = new ClientWebSocket();
-        _webSocket.Options.KeepAliveInterval = TimeSpan.FromSeconds(WS_KEEP_ALIVE_INTERVAL); // ping/pong
+        _webSocket.Options.KeepAliveInterval = TimeSpan.FromSeconds(WS_KEEP_ALIVE_INTERVAL);
 
         using var httpClient = new HttpClient
         (
@@ -115,28 +119,27 @@ sealed class WebSocketWrapper : SocketWrapper
             }
         );
 
-
         await _webSocket.ConnectAsync(uri, httpClient, _tokenSource.Token);
+#endif
 
         Log.Trace($"Connected WebSocket: {uri}");
 
-        // Kicks off the async receiving loop 
         StartReceiveAsync().ConfigureAwait(false);
     }
 
     private async Task StartReceiveAsync()
     {
         var buffer = Shared.Rent(4096);
-        var memory = buffer.AsMemory();
         var position = 0;
 
         try
         {
             while (IsConnected)
             {
-                GrowReceiveBufferIfNeeded(ref buffer, ref memory);
+                GrowReceiveBufferIfNeeded(ref buffer, ref position);
 
-                var receiveResult = await _webSocket.ReceiveAsync(memory.Slice(position), _tokenSource.Token);
+                var segment = new ArraySegment<byte>(buffer, position, buffer.Length - position);
+                var receiveResult = await _webSocket.ReceiveAsync(segment, _tokenSource.Token);
 
                 // Ignoring message types:
                 // 1. WebSocketMessageType.Text: shouldn't be sent by the server, though might be useful for multiplexing commands
@@ -173,21 +176,19 @@ sealed class WebSocketWrapper : SocketWrapper
             InvokeOnError(SocketError.ConnectionReset);
     }
 
-    // This is probably unnecessary, but WebSocket frames can be up to 2^63 bytes so we put some cap on it, yet to see packets larger than 4KB come through.
-    // We peek the raw tcp socket available bytes, grow if the frame is bigger, we're naively assuming no compression.
-    private void GrowReceiveBufferIfNeeded(ref byte[] buffer, ref Memory<byte> memory)
+    private void GrowReceiveBufferIfNeeded(ref byte[] buffer, ref int position)
     {
-        if (_rawSocket.Available <= buffer.Length)
+        if (_rawSocket == null || _rawSocket.Available <= buffer.Length)
             return;
 
         if (_rawSocket.Available > MAX_RECEIVE_BUFFER_SIZE)
-            throw new SocketException((int)SocketError.MessageSize, $"WebSocket message frame too large: {_rawSocket.Available} > {MAX_RECEIVE_BUFFER_SIZE}");
+            throw new SocketException((int)SocketError.MessageSize);
 
         Log.Trace($"WebSocket growing receive buffer {buffer.Length} bytes to {_rawSocket.Available} bytes");
 
         Shared.Return(buffer);
         buffer = Shared.Rent(_rawSocket.Available);
-        memory = buffer.AsMemory();
+        position = 0;
     }
 
     public override void Disconnect()

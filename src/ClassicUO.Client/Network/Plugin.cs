@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using System;
 using System.Collections.Generic;
@@ -231,61 +231,33 @@ namespace ClassicUO.Network
                 if (installPtr == IntPtr.Zero)
                 {
                     Native.FreeLibrary(assptr);
-                    Console.WriteLine("free lib done");
                     throw new Exception("Invalid Entry Point, Attempting managed load.");
                 }
 
                 Marshal.GetDelegateForFunctionPointer<OnInstall>(installPtr)(func);
-
-                Console.WriteLine(">>> ADDRESS {0}", header.OnInitialize);
+                Log.Trace($"Plugin Install() returned; OnInitialize={header.OnInitialize}");
             }
-            catch
+            catch (Exception nativeEx)
             {
-                try
+                Log.Trace($"Plugin native load failed ({nativeEx.Message}), attempting host fallback.");
+                if (Client.Game.PluginHost != null)
                 {
-                    Client.Game.PluginHost?.LoadPlugin(PluginPath);
-
-                    //Client.Game.AssistantHost.OnSocketConnected += (o, e) => {
-                    //    Client.Game.AssistantHost.PluginInitialize(PluginPath);
-                    //};
-                    //Client.Game.AssistantHost.Connect("127.0.0.1", 7777);
-
-                    //Assembly asm = Assembly.LoadFile(PluginPath);
-                    //Type type = asm.GetType("Assistant.Engine");
-
-                    //if (type == null)
-                    //{
-                    //    Log.Error(
-                    //        "Unable to find Plugin Type, API requires the public class Engine in namespace Assistant."
-                    //    );
-
-                    //    return;
-                    //}
-
-                    //MethodInfo meth = type.GetMethod(
-                    //    "Install",
-                    //    BindingFlags.Public | BindingFlags.Static
-                    //);
-
-                    //if (meth == null)
-                    //{
-                    //    Log.Error(
-                    //        "Engine class missing public static Install method Needs 'public static unsafe void Install(PluginHeader *plugin)' "
-                    //    );
-
-                    //    return;
-                    //}
-
-                    //meth.Invoke(null, new object[] { (IntPtr)func });
+                    try
+                    {
+                        Client.Game.PluginHost.LoadPlugin(PluginPath);
+                        Log.Trace($"Plugin '{PluginPath}' load delegated to host.");
+                        return;
+                    }
+                    catch (Exception err)
+                    {
+                        Log.Error(
+                            $"Plugin host load failed. {err.Message} {err.StackTrace} {err.InnerException?.Message} {err.InnerException?.StackTrace}"
+                        );
+                        return;
+                    }
                 }
-                catch (Exception err)
-                {
-                    Log.Error(
-                        $"Plugin threw an error during Initialization. {err.Message} {err.StackTrace} {err.InnerException?.Message} {err.InnerException?.StackTrace}"
-                    );
-
+                if (!TryLoadManagedPlugin(func))
                     return;
-                }
             }
 
             if (header.OnRecv != IntPtr.Zero)
@@ -395,7 +367,52 @@ namespace ClassicUO.Network
 
             if (_onInitialize != null)
             {
+                Log.Trace($"Calling plugin OnInitialize: {PluginPath}");
                 _onInitialize();
+            }
+            else
+            {
+                Log.Trace($"Plugin did not register OnInitialize: {PluginPath}");
+            }
+        }
+
+        private bool TryLoadManagedPlugin(void* headerPtr)
+        {
+            try
+            {
+                Assembly asm = Assembly.LoadFrom(PluginPath);
+                Type type = asm.GetType("Assistant.Engine");
+                if (type == null)
+                {
+                    foreach (Type t in asm.GetExportedTypes())
+                    {
+                        MethodInfo m = t.GetMethod("Install", BindingFlags.Public | BindingFlags.Static);
+                        if (m != null && m.GetParameters().Length == 1)
+                        {
+                            type = t;
+                            break;
+                        }
+                    }
+                }
+                if (type == null)
+                {
+                    Log.Warn($"Managed plugin '{PluginPath}': no type Assistant.Engine and no static Install(pointer) found.");
+                    return false;
+                }
+                MethodInfo meth = type.GetMethod("Install", BindingFlags.Public | BindingFlags.Static);
+                if (meth == null || meth.GetParameters().Length != 1)
+                {
+                    Log.Warn($"Managed plugin '{PluginPath}': Install method not found or invalid signature on {type.FullName}.");
+                    return false;
+                }
+                meth.Invoke(null, new object[] { (IntPtr)headerPtr });
+                Log.Trace($"Managed plugin Install() called: {PluginPath}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Warn($"Managed plugin load failed for '{PluginPath}': {ex.Message}");
+                return false;
             }
         }
 
@@ -512,33 +529,52 @@ namespace ClassicUO.Network
 
         internal static bool ProcessRecvPacket(byte[] data, ref int length)
         {
+            if (data == null || length < 0 || length > data.Length)
+                return true;
+
             bool result = Client.Game.PluginHost?.PacketIn(new ArraySegment<byte>(data, 0, length)) ?? true;
 
             foreach (Plugin plugin in Plugins)
             {
-                if (plugin._onRecv_new != null)
+                try
                 {
-                    byte[] tmp = new byte[length];
-                    Array.Copy(data, tmp, length);
-
-                    if (!plugin._onRecv_new(tmp, ref length))
+                    if (plugin._onRecv_new != null)
                     {
-                        result = false;
-                    }
+                        int len = length;
+                        byte[] tmp = new byte[len];
+                        Array.Copy(data, 0, tmp, 0, len);
 
-                    Array.Copy(tmp, data, length);
+                        if (!plugin._onRecv_new(tmp, ref len))
+                            result = false;
+
+                        int copyBack = len < 0 ? 0 : Math.Min(len, tmp.Length);
+                        if (copyBack > 0 && copyBack <= data.Length)
+                        {
+                            Array.Copy(tmp, 0, data, 0, copyBack);
+                            length = copyBack;
+                        }
+                    }
+                    else if (plugin._onRecv != null)
+                    {
+                        int len = length;
+                        byte[] tmp = new byte[len];
+                        Array.Copy(data, 0, tmp, 0, len);
+
+                        if (!plugin._onRecv(ref tmp, ref len))
+                            result = false;
+
+                        int copyBack = len < 0 ? 0 : Math.Min(len, tmp != null ? tmp.Length : 0);
+                        if (copyBack > 0 && data != null && copyBack <= data.Length && tmp != null)
+                        {
+                            Array.Copy(tmp, 0, data, 0, copyBack);
+                            length = copyBack;
+                        }
+                    }
                 }
-                else if (plugin._onRecv != null)
+                catch (Exception ex)
                 {
-                    byte[] tmp = new byte[length];
-                    Array.Copy(data, tmp, length);
-
-                    if (!plugin._onRecv(ref tmp, ref length))
-                    {
-                        result = false;
-                    }
-
-                    Array.Copy(tmp, data, length);
+                    Log.Warn($"Plugin recv error ({plugin.PluginPath}): {ex.Message}");
+                    result = false;
                 }
             }
 
@@ -551,31 +587,33 @@ namespace ClassicUO.Network
 
             foreach (Plugin plugin in Plugins)
             {
-                if (plugin._onSend_new != null)
+                try
                 {
-                    var tmp = message.ToArray();
-                    var length = tmp.Length;
-
-                    if (!plugin._onSend_new(tmp, ref length))
+                    if (plugin._onSend_new != null)
                     {
-                        result = false;
+                        var tmp = message.ToArray();
+                        var len = tmp.Length;
+                        if (!plugin._onSend_new(tmp, ref len))
+                            result = false;
+                        int copyLen = len < 0 ? 0 : Math.Min(len, tmp.Length);
+                        if (copyLen > 0 && copyLen <= message.Length)
+                            tmp.AsSpan(0, copyLen).CopyTo(message.Slice(0, copyLen));
                     }
-
-                    message = message.Slice(0, length);
-                    tmp.AsSpan(0, length).CopyTo(message);
+                    else if (plugin._onSend != null)
+                    {
+                        var tmp = message.ToArray();
+                        var len = tmp.Length;
+                        if (!plugin._onSend(ref tmp, ref len))
+                            result = false;
+                        int copyLen = len < 0 ? 0 : Math.Min(len, tmp != null ? tmp.Length : 0);
+                        if (copyLen > 0 && copyLen <= message.Length && tmp != null)
+                            tmp.AsSpan(0, copyLen).CopyTo(message.Slice(0, copyLen));
+                    }
                 }
-                else if (plugin._onSend != null)
+                catch (Exception ex)
                 {
-                    var tmp = message.ToArray();
-                    var length = tmp.Length;
-
-                    if (!plugin._onSend(ref tmp, ref length))
-                    {
-                        result = false;
-                    }
-
-                    message = message.Slice(0, length);
-                    tmp.AsSpan(0, length).CopyTo(message);
+                    Log.Warn($"Plugin send error ({plugin.PluginPath}): {ex.Message}");
+                    result = false;
                 }
             }
 

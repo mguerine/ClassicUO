@@ -1,4 +1,4 @@
-﻿using ClassicUO.Utility;
+using ClassicUO.Utility;
 using System;
 using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
@@ -24,22 +24,22 @@ namespace ClassicUO.IO
 
         public int Position { get; private set; }
         public long Length { get; }
-        public readonly int Remaining => (int)(Length - Position);
+        public int Remaining => (int)(Length - Position);
 
-        public readonly IntPtr StartAddress => (IntPtr)Unsafe.AsPointer(ref GetPinnableReference());
-        public readonly IntPtr PositionAddress
+        public IntPtr StartAddress => (IntPtr)Unsafe.AsPointer(ref GetPinnableReference());
+        public IntPtr PositionAddress
         {
             [MethodImpl(IMPL_OPTION)]
             get => (IntPtr)((byte*)Unsafe.AsPointer(ref GetPinnableReference()) + Position);
         }
 
-        public readonly byte this[int index] => _data[index];
+        public byte this[int index] => _data[index];
 
         public ReadOnlySpan<byte> Buffer => _data;
 
 
         [MethodImpl(IMPL_OPTION)]
-        public readonly ref byte GetPinnableReference() => ref MemoryMarshal.GetReference(_data);
+        public ref byte GetPinnableReference() => ref MemoryMarshal.GetReference(_data);
 
 
         [MethodImpl(IMPL_OPTION)]

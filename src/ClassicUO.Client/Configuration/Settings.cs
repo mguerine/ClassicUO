@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using System;
 using System.IO;
@@ -87,7 +87,11 @@ namespace ClassicUO.Configuration
         [JsonPropertyName("encryption")] public byte Encryption { get; set; }
 
         [JsonPropertyName("plugins")] public string[] Plugins { get; set; } = { @"./Assistant/Razor.dll" };
-        
+
+        [JsonPropertyName("use_external_plugin_host")] public bool UseExternalPluginHost { get; set; }
+
+        [JsonPropertyName("external_plugin_path")] public string ExternalPluginPath { get; set; } = string.Empty;
+
         [JsonPropertyName("files_override")] public string OverrideFile { get; set; }
 
         public static string GetSettingsFilepath()

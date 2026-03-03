@@ -8,6 +8,7 @@ namespace ClassicUO.Game.UI.Gumps
 
         Buff,
         Container,
+        GridContainer,
         CounterBar,
         HealthBar,
         InfoBar,

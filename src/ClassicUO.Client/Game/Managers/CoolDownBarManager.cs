@@ -1,4 +1,4 @@
-﻿using ClassicUO.Configuration;
+using ClassicUO.Configuration;
 using ClassicUO.Game.UI.Gumps;
 using System;
 using System.Threading.Tasks;
@@ -9,13 +9,21 @@ namespace ClassicUO.Game.Managers
     {
         private const int MAX_COOLDOWN_BARS = 15;
         private static CoolDownBar[] coolDownBars = new CoolDownBar[MAX_COOLDOWN_BARS];
+        private static bool _bound;
 
         public CoolDownBarManager()
         {
-            ClassicUO.Client.Game.UO.World.MessageManager.MessageReceived += MessageManager_MessageReceived;
         }
 
-        private void MessageManager_MessageReceived(object sender, MessageEventArgs e)
+        public static void Bind(World world)
+        {
+            if (world == null || _bound)
+                return;
+            world.MessageManager.MessageReceived += MessageManager_MessageReceived;
+            _bound = true;
+        }
+
+        private static void MessageManager_MessageReceived(object sender, MessageEventArgs e)
         {
             new Task(() =>
             {

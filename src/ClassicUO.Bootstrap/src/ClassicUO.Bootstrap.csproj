@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>Preview</LangVersion>
     <AssemblyName>ClassicUO</AssemblyName>
@@ -27,5 +27,17 @@
       <HintPath>..\..\..\external\cuoapi\cuoapi.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ClassicUO.PluginHost\ClassicUO.PluginHost.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <Target Name="CopyPluginHost" AfterTargets="Build">
+    <PropertyGroup>
+      <_PluginHostDir>$(MSBuildThisFileDirectory)..\..\ClassicUO.PluginHost\bin\$(Configuration)\net48\</_PluginHostDir>
+    </PropertyGroup>
+    <Copy SourceFiles="$(_PluginHostDir)PluginHost.exe" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" Condition="Exists('$(_PluginHostDir)PluginHost.exe')" />
+    <Copy SourceFiles="$(_PluginHostDir)PluginHostConfig.json" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" Condition="Exists('$(_PluginHostDir)PluginHostConfig.json')" />
+  </Target>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using System;
 using System.Text;
@@ -99,7 +99,7 @@ namespace ClassicUO.Game.UI.Gumps
 
                 sb.Dispose();
 
-                Vector2 size = Fonts.Bold.MeasureString(_cacheText);
+                Vector2 size = Fonts.Bold.MeasureString(_cacheText.AsSpan());
 
                 _trans.Width = Width = (int) (size.X + 20);
                 _trans.Height = Height = (int) (size.Y + 20);
@@ -138,7 +138,7 @@ namespace ClassicUO.Game.UI.Gumps
             batcher.DrawString
             (
                 Fonts.Bold,
-                _cacheText,
+                _cacheText.AsSpan(),
                 x + 10,
                 y + 10,
                 hueVector

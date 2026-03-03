@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.IO;
 using ClassicUO.Utility;
@@ -49,7 +49,7 @@ namespace ClassicUO.Assets
                     buf = new byte[entry.Length];
 
                 _file.Read(buf.AsSpan(0, entry.Length - 1));
-                var name = Encoding.ASCII.GetString(buf.AsSpan(0, entry.Length - 1)).TrimEnd('\0');
+                var name = Encoding.ASCII.GetString(buf, 0, entry.Length - 1).TrimEnd('\0');
 
                 Skills.Add(new SkillEntry(count++, name, hasAction));
             }

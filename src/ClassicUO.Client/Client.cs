@@ -1,10 +1,11 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.Assets;
 using ClassicUO.Configuration;
 using ClassicUO.Dust765.Dust765;
 using ClassicUO.Game;
 using ClassicUO.Game.Data;
+using ClassicUO.Game.Managers;
 using ClassicUO.IO;
 using ClassicUO.Network;
 using ClassicUO.Network.Encryption;
@@ -95,6 +96,7 @@ namespace ClassicUO
             LightColors.LoadLights();
 
             World = new World();
+            CoolDownBarManager.Bind(World);
             GameCursor = new GameCursor(World);
         }
 

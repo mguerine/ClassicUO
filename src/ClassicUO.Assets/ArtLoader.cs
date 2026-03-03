@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: BSD-2-Clause
+// SPDX-License-Identifier: BSD-2-Clause
 
 using ClassicUO.IO;
 using ClassicUO.Utility;
@@ -49,7 +49,7 @@ namespace ClassicUO.Assets
         //         ? Rectangle.Empty
         //         : _spriteInfos[index + 0x4000].ArtBounds;
 
-        private static uint[] LoadLand(UOFile file, ref readonly UOFileIndex entry, out short width, out short height)
+        private static uint[] LoadLand(UOFile file, ref UOFileIndex entry, out short width, out short height)
         {
             if (entry.Length == 0)
             {
@@ -95,7 +95,7 @@ namespace ClassicUO.Assets
             return data;
         }
 
-        private static unsafe uint[] LoadArt(UOFile file, ref readonly UOFileIndex entry, out short width, out short height)
+        private static unsafe uint[] LoadArt(UOFile file, ref UOFileIndex entry, out short width, out short height)
         {
             if (entry.Length == 0)
             {
@@ -210,9 +210,9 @@ namespace ClassicUO.Assets
             ref var entry = ref _file.GetValidRefEntry((int)idx);
             var loadLand = idx < 0x4000;
             var pixels = loadLand ?
-                LoadLand(_file, in entry, out var width, out var height)
+                LoadLand(_file, ref entry, out var width, out var height)
                 :
-                LoadArt(_file, in entry, out width, out height);
+                LoadArt(_file, ref entry, out width, out height);
 
             return new ArtInfo()
             {

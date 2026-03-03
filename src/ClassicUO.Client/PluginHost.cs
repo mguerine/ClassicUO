@@ -1,4 +1,4 @@
-﻿using ClassicUO.Configuration;
+using ClassicUO.Configuration;
 using ClassicUO.Game;
 using ClassicUO.Network;
 using Microsoft.Xna.Framework.Graphics;
@@ -272,8 +272,15 @@ namespace ClassicUO
             if (_initialize == null)
                 return;
 
+#if NET48
+            var mem = Marshal.AllocHGlobal(sizeof(ClientBindings));
+            for (int i = 0; i < sizeof(ClientBindings); i++)
+                Marshal.WriteByte(mem, i, 0);
+            ref var cuoHost = ref Unsafe.AsRef<ClientBindings>(mem.ToPointer());
+#else
             var mem = NativeMemory.AllocZeroed((nuint)sizeof(ClientBindings));
             ref var cuoHost = ref Unsafe.AsRef<ClientBindings>(mem);
+#endif
             cuoHost.PacketLengthFn = Marshal.GetFunctionPointerForDelegate(_packetLength);
             cuoHost.CastSpellFn = Marshal.GetFunctionPointerForDelegate(_castSpell);
             cuoHost.SetWindowTitleFn = Marshal.GetFunctionPointerForDelegate(_setWindowTitle);
