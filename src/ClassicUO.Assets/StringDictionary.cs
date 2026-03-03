@@ -43,7 +43,7 @@ public sealed class StringDictionaryLoader : UOFileLoader
             return;
 
         file.Seek(index.Offset, SeekOrigin.Begin);
-        var buf = new byte[file.Length];
+        var buf = new byte[index.Length];
         file.Read(buf);
 
         var dbuf = new byte[index.DecompressedLength];

@@ -8,8 +8,8 @@
     <AssemblyName>ClassicUO</AssemblyName>
     <RootNamespace>ClassicUO</RootNamespace>
     <ApplicationIcon>cuoicon.ico</ApplicationIcon>
-    <PlatformTarget>x64</PlatformTarget>
-    <Platforms>x64</Platforms>
+    <PlatformTarget>$(Platform)</PlatformTarget>
+    <Platforms>x86;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,9 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="cuoapi">
-      <HintPath>..\..\..\external\cuoapi\cuoapi.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\..\external\cuoapi\src\cuoapi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,7 +32,7 @@
 
   <Target Name="CopyPluginHost" AfterTargets="Build">
     <PropertyGroup>
-      <_PluginHostDir>$(MSBuildThisFileDirectory)..\..\ClassicUO.PluginHost\bin\$(Configuration)\net48\</_PluginHostDir>
+      <_PluginHostDir>$(MSBuildThisFileDirectory)..\..\ClassicUO.PluginHost\bin\$(Platform)\$(Configuration)\</_PluginHostDir>
     </PropertyGroup>
     <Copy SourceFiles="$(_PluginHostDir)PluginHost.exe" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" Condition="Exists('$(_PluginHostDir)PluginHost.exe')" />
     <Copy SourceFiles="$(_PluginHostDir)PluginHostConfig.json" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" Condition="Exists('$(_PluginHostDir)PluginHostConfig.json')" />

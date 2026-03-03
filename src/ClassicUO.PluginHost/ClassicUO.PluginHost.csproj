@@ -4,9 +4,11 @@
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>PluginHost</AssemblyName>
     <RootNamespace>ClassicUO.PluginHost</RootNamespace>
-    <PlatformTarget>x64</PlatformTarget>
-    <Platforms>x64</Platforms>
+    <PlatformTarget>$(Platform)</PlatformTarget>
+    <Platforms>x86;x64</Platforms>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Update="PluginHostConfig.json">
